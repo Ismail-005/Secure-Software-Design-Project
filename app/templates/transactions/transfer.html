@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% block title %}Transfer{% endblock %}
+{% block content %}
+<h1>Transfer from {{ account.account_number }}</h1>
+<form method="POST">
+  {{ form.hidden_tag() }}
+  {{ form.nonce() }}
+  <label>To Account Number: <input type="text" name="to_account_number" id="to-account-number"></label><br>
+  <label>Amount: <input type="number" name="amount" id="transfer-amount" step="0.01" min="0.01"></label><br>
+  <button type="submit" id="transfer-btn">Transfer</button>
+</form>
+<a href="{{ url_for('accounts.account_detail', account_id=account.id) }}">Back</a>
+{% endblock %}

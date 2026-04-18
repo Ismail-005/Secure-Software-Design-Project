@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Fraud Review{% endblock %}
+{% block content %}
+<h1>Fraud-Flagged Transactions</h1>
+<table border="1" cellpadding="4">
+  <tr><th>ID</th><th>Type</th><th>Amount</th><th>From</th><th>To</th><th>Date</th></tr>
+  {% for txn in transactions %}
+  <tr>
+    <td>{{ txn.id }}</td>
+    <td>{{ txn.transaction_type.value }}</td>
+    <td>${{ txn.amount }}</td>
+    <td>{{ txn.from_account_id }}</td>
+    <td>{{ txn.to_account_id }}</td>
+    <td>{{ txn.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="6">No fraud-flagged transactions.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

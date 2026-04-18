@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>My Accounts</h1>
+{% for account in accounts %}
+<div>
+  <a href="{{ url_for('accounts.account_detail', account_id=account.id) }}">
+    {{ account.account_number }} ({{ account.account_type.value }})
+  </a> — Balance: ${{ balances[account.id] }}
+  | <a href="{{ url_for('transactions.deposit', account_id=account.id) }}">Deposit</a>
+  | <a href="{{ url_for('transactions.withdraw', account_id=account.id) }}">Withdraw</a>
+  | <a href="{{ url_for('transactions.transfer', account_id=account.id) }}">Transfer</a>
+</div>
+{% else %}
+<p>No accounts. Ask a teller to open one.</p>
+{% endfor %}
+{% endblock %}

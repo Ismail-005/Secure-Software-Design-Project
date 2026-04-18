@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCBS - {% block title %}{% endblock %}</title>
+  <meta name="description" content="Secure Core Banking System">
+</head>
+<body>
+  {% if current_user.is_authenticated %}
+    <nav>
+      Hello, {{ current_user.username }} ({{ current_user.role.value }}) |
+      <a href="{{ url_for('auth.logout') }}">Logout</a>
+      {% if current_user.role.value in ['admin', 'manager'] %}
+        | <a href="{{ url_for('admin.audit_logs') }}">Audit Logs</a>
+        | <a href="{{ url_for('admin.fraud_review') }}">Fraud Review</a>
+      {% endif %}
+      {% if current_user.role.value == 'admin' %}
+        | <a href="{{ url_for('admin.users') }}">Users</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <p class="{{ category }}">{{ message }}</p>
+    {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</body>
+</html>
