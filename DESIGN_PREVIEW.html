@@ -345,12 +345,13 @@
 
     .btn {
       border-radius: var(--radius-sm);
-      padding: 10px 14px;
+      padding: 11px 14px;
       border: 1px solid var(--border);
       background: transparent;
       color: var(--text);
-      min-height: 40px;
+      min-height: 44px;
       cursor: pointer;
+      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 120ms ease;
     }
 
     .btn.primary {
@@ -369,12 +370,54 @@
       background: transparent;
     }
 
+    .btn:hover {
+      border-color: var(--accent);
+    }
+
+    .btn.primary:hover {
+      background: var(--accent-strong);
+      border-color: var(--accent-strong);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
     .field {
       min-width: 190px;
+      min-height: 44px;
       padding: 10px 12px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       background: var(--surface-2);
+      color: var(--text);
+    }
+
+    .field::placeholder {
+      color: var(--muted);
+    }
+
+    .btn:focus-visible,
+    .field:focus-visible,
+    .toggle:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .field-stack {
+      display: grid;
+      gap: var(--space-sm);
+      margin-top: var(--space-md);
+    }
+
+    .field-block {
+      display: grid;
+      gap: var(--space-xs);
+    }
+
+    .field-label {
+      font-size: 0.95rem;
+      font-weight: 600;
       color: var(--text);
     }
 
@@ -989,9 +1032,15 @@ RISK_SCORE=74</p>
           <span class="label">Login screen</span>
           <h3 style="margin:0 0 8px;font-family:var(--display);font-size:1.8rem;line-height:0.95;text-transform:uppercase;">Operator Login</h3>
           <p class="body-sample muted">Access is monitored. All privileged actions are logged and chained.</p>
-          <div style="display:grid;gap:8px;margin-top:16px;">
-            <input class="field" value="Username">
-            <input class="field" value="Password">
+          <div class="field-stack">
+            <label class="field-block">
+              <span class="field-label">Username</span>
+              <input class="field" type="text" placeholder="fatima.k">
+            </label>
+            <label class="field-block">
+              <span class="field-label">Password</span>
+              <input class="field" type="password" placeholder="Enter password">
+            </label>
             <button class="btn primary">Continue to MFA</button>
           </div>
         </section>
@@ -999,8 +1048,11 @@ RISK_SCORE=74</p>
           <span class="label">MFA checkpoint</span>
           <h3 style="margin:0 0 8px;font-family:var(--display);font-size:1.8rem;line-height:0.95;text-transform:uppercase;">Verify Device</h3>
           <p class="body-sample muted">A six-digit code has been issued through the secure channel tied to this operator.</p>
-          <div style="display:grid;gap:8px;margin-top:16px;">
-            <input class="field" value="OTP code">
+          <div class="field-stack">
+            <label class="field-block">
+              <span class="field-label">One-time passcode</span>
+              <input class="field" type="text" inputmode="numeric" placeholder="6-digit code">
+            </label>
             <div class="alert info">Session expires after 30 minutes of inactivity.</div>
             <button class="btn primary">Verify and enter</button>
           </div>
