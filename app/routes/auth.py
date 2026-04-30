@@ -29,10 +29,9 @@ def login():
         )
         db.session.commit()
         if ok:
-            plaintext = svc.create_otp_for_user(user_id)
+            svc.create_otp_for_user(user_id)
             db.session.commit()
             session['pending_user_id'] = user_id
-            print(f"[DEV] OTP for {form.username.data}: {plaintext}")
             flash('OTP sent. Enter it below.', 'info')
             return redirect(url_for('auth.mfa_verify'))
         flash(msg, 'error')

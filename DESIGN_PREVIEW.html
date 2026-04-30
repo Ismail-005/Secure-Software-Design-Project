@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SCBS Design Preview</title>
+  <meta name="description" content="Design system preview for Secure Core Banking System">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3f0e8;
+      --surface: #fbfaf7;
+      --surface-2: #f7f4ee;
+      --surface-3: #f0ebe2;
+      --border: #d8d1c5;
+      --text: #161a1f;
+      --muted: #5f6772;
+      --accent: #0f4c5c;
+      --accent-strong: #0b3945;
+      --secondary: #8c6a2b;
+      --success: #1f6b4f;
+      --warning: #b06a1e;
+      --error: #b13a3a;
+      --info: #275d8c;
+      --shadow: 0 1px 0 rgba(22, 26, 31, 0.04);
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --space-2xs: 2px;
+      --space-xs: 4px;
+      --space-sm: 8px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+      --space-2xl: 48px;
+      --display: "IBM Plex Sans Condensed", sans-serif;
+      --body: "Source Sans 3", sans-serif;
+      --mono: "IBM Plex Mono", monospace;
+    }
+
+    body.dark {
+      --bg: #12161c;
+      --surface: #181e25;
+      --surface-2: #1d242c;
+      --surface-3: #222b35;
+      --border: #2f3945;
+      --text: #edf0f3;
+      --muted: #99a4b1;
+      --accent: #4f93a5;
+      --accent-strong: #7faebb;
+      --secondary: #c59b4f;
+      --success: #49a478;
+      --warning: #d09346;
+      --error: #d66a6a;
+      --info: #6a9fcb;
+      --shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+    }
+
+    body {
+      transition: background-color 180ms ease, color 180ms ease;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    .page {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: var(--space-lg);
+    }
+
+    .hero {
+      display: grid;
+      gap: var(--space-lg);
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      align-items: end;
+      padding: 0 0 var(--space-xl);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 10px;
+      height: 10px;
+      border: 2px solid var(--accent);
+      border-radius: 50%;
+    }
+
+    .hero h1 {
+      margin: var(--space-md) 0 var(--space-sm);
+      font-family: var(--display);
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      line-height: 0.92;
+      text-transform: uppercase;
+      max-width: 10ch;
+    }
+
+    .hero p {
+      max-width: 58ch;
+      margin: 0;
+      font-size: 1.12rem;
+      line-height: 1.45;
+      color: var(--muted);
+    }
+
+    .hero-meta {
+      display: grid;
+      gap: var(--space-md);
+      padding-top: var(--space-md);
+    }
+
+    .stat-strip {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+
+    .stat-strip > div {
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: var(--space-md);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-strip strong,
+    .kpi strong {
+      display: block;
+      font-family: var(--mono);
+      font-size: 1.05rem;
+      margin-bottom: var(--space-xs);
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      align-items: center;
+      justify-content: space-between;
+      margin: var(--space-lg) 0 var(--space-xl);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+    }
+
+    .pill {
+      padding: 7px 12px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      background: var(--surface);
+      color: var(--muted);
+    }
+
+    .toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    .section {
+      padding: var(--space-xl) 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-head {
+      display: grid;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-lg);
+      max-width: 70ch;
+    }
+
+    .section-head h2 {
+      margin: 0;
+      font-family: var(--display);
+      font-size: clamp(2rem, 3.4vw, 3rem);
+      line-height: 0.96;
+      text-transform: uppercase;
+    }
+
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .specimens,
+    .palette,
+    .mockup-grid,
+    .component-grid {
+      display: grid;
+      gap: var(--space-md);
+    }
+
+    .specimens {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+
+    .component-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .mockup-grid {
+      grid-template-columns: minmax(250px, 260px) minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .panel,
+    .swatch,
+    .component-box,
+    .shell,
+    .specimen {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow);
+    }
+
+    .specimen,
+    .component-box,
+    .swatch,
+    .panel {
+      padding: var(--space-md);
+    }
+
+    .specimen .label,
+    .panel .label,
+    .component-box .label {
+      display: block;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: var(--space-sm);
+      letter-spacing: 0.04em;
+    }
+
+    .display-sample {
+      font-family: var(--display);
+      font-size: clamp(2.2rem, 4vw, 3.7rem);
+      line-height: 0.95;
+      text-transform: uppercase;
+      margin: 0 0 var(--space-sm);
+    }
+
+    .body-sample {
+      font-size: 1rem;
+      line-height: 1.55;
+      margin: 0;
+    }
+
+    .mono-sample {
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      line-height: 1.55;
+      white-space: pre-line;
+      margin: 0;
+    }
+
+    .swatch {
+      display: grid;
+      gap: var(--space-sm);
+      padding-bottom: var(--space-lg);
+    }
+
+    .tone {
+      height: 86px;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .tone.dark-border {
+      border-color: rgba(255, 255, 255, 0.08);
+    }
+
+    .swatch strong {
+      font-size: 1rem;
+    }
+
+    .swatch code {
+      font-family: var(--mono);
+      color: var(--muted);
+    }
+
+    .button-row,
+    .field-row,
+    .alert-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-sm);
+      align-items: center;
+    }
+
+    .btn {
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      min-height: 40px;
+      cursor: pointer;
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #f8fafb;
+    }
+
+    .btn.secondary {
+      background: var(--surface-3);
+      border-color: var(--border);
+      color: var(--text);
+    }
+
+    .btn.ghost {
+      background: transparent;
+    }
+
+    .field {
+      min-width: 190px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface-2);
+      color: var(--text);
+    }
+
+    .alert {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      border: 1px solid currentColor;
+      font-size: 0.95rem;
+    }
+
+    .alert.success { color: var(--success); }
+    .alert.warning { color: var(--warning); }
+    .alert.error { color: var(--error); }
+    .alert.info { color: var(--info); }
+
+    .shell {
+      overflow: hidden;
+    }
+
+    .app-shell {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      min-height: 900px;
+      background: var(--surface);
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--border);
+      background: var(--surface-2);
+      padding: var(--space-lg);
+      display: grid;
+      gap: var(--space-lg);
+      align-content: start;
+    }
+
+    .brand {
+      display: grid;
+      gap: var(--space-sm);
+    }
+
+    .brand strong {
+      font-family: var(--display);
+      font-size: 1.8rem;
+      line-height: 0.95;
+      text-transform: uppercase;
+    }
+
+    .nav-group {
+      display: grid;
+      gap: var(--space-xs);
+    }
+
+    .nav-group h3 {
+      margin: 0 0 var(--space-sm);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .nav-item {
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--muted);
+      border: 1px solid transparent;
+    }
+
+    .nav-item.active {
+      background: var(--surface);
+      border-color: var(--border);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .main {
+      padding: var(--space-lg);
+      display: grid;
+      gap: var(--space-lg);
+      align-content: start;
+    }
+
+    .topbar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+
+    .topbar h3 {
+      margin: 0;
+      font-family: var(--display);
+      font-size: 2rem;
+      text-transform: uppercase;
+      line-height: 0.95;
+    }
+
+    .topbar .context {
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: var(--space-sm);
+    }
+
+    .kpi {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+    }
+
+    .kpi strong {
+      font-size: 1.2rem;
+    }
+
+    .grid-two {
+      display: grid;
+      gap: var(--space-sm);
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.95rem;
+    }
+
+    .table th,
+    .table td {
+      text-align: left;
+      padding: 11px 10px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .table th {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      letter-spacing: 0.04em;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-family: var(--mono);
+      font-size: 0.74rem;
+      border: 1px solid currentColor;
+    }
+
+    .status.success { color: var(--success); }
+    .status.warning { color: var(--warning); }
+    .status.error { color: var(--error); }
+    .status.info { color: var(--info); }
+
+    .list {
+      display: grid;
+      gap: var(--space-sm);
+    }
+
+    .list-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: var(--space-sm);
+      align-items: start;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .list-item:last-child {
+      border-bottom: 0;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-top: 6px;
+      background: var(--accent);
+    }
+
+    .dot.warning { background: var(--warning); }
+    .dot.error { background: var(--error); }
+    .dot.success { background: var(--success); }
+
+    .list-item strong {
+      display: block;
+      margin-bottom: var(--space-2xs);
+    }
+
+    .split-panel {
+      display: grid;
+      gap: var(--space-sm);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .footnote {
+      margin-top: var(--space-lg);
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 1200px) {
+      .hero,
+      .mockup-grid,
+      .grid-two {
+        grid-template-columns: 1fr;
+      }
+
+      .specimens,
+      .component-grid,
+      .swatch-grid,
+      .kpi-row,
+      .stat-strip,
+      .split-panel {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .page {
+        padding: var(--space-md);
+      }
+
+      .specimens,
+      .component-grid,
+      .swatch-grid,
+      .kpi-row,
+      .stat-strip,
+      .split-panel {
+        grid-template-columns: 1fr;
+      }
+
+      .app-shell {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <section class="hero">
+      <div>
+        <div class="eyebrow">Secure Core Banking System</div>
+        <h1>No Slop. No Theater. Real Banking Software.</h1>
+        <p>
+          This direction treats SCBS like internal financial infrastructure, not a generic startup dashboard.
+          Sharp type, warm neutral surfaces, exact numerics, and controls that look built for operators who move money and answer for it.
+        </p>
+      </div>
+      <div class="hero-meta">
+        <div class="stat-strip">
+          <div>
+            <strong>IBM Plex Sans Condensed</strong>
+            <span class="muted">Display voice, institutional, specific</span>
+          </div>
+          <div>
+            <strong>#0F4C5C</strong>
+            <span class="muted">Primary accent, dark ink blue-green</span>
+          </div>
+          <div>
+            <strong>8px Grid</strong>
+            <span class="muted">Compact enough for operators, not cramped</span>
+          </div>
+        </div>
+        <div class="panel">
+          <span class="label">Design Thesis</span>
+          <p class="body-sample">
+            The system should feel trustworthy, deliberate, and slightly severe. The kind of product where approvals, locks, fraud review, and audit logs look native, not bolted on.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="toolbar">
+      <div class="pill-row">
+        <span class="pill">Internal dashboard</span>
+        <span class="pill">Banking operations</span>
+        <span class="pill">Anti AI slop</span>
+        <span class="pill">Warm neutral palette</span>
+      </div>
+      <button class="toggle" id="theme-toggle" type="button" aria-label="Toggle light and dark mode">
+        Toggle light / dark
+      </button>
+    </div>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Typography</h2>
+        <p>Three fonts. Three jobs. Nothing ornamental, nothing default. Headers do the identity work. Body copy stays readable. Numbers and audit references get a mono voice so the system feels exact.</p>
+      </div>
+      <div class="specimens">
+        <article class="specimen">
+          <span class="label">Display / Section Headers</span>
+          <h3 class="display-sample">Pending Approvals Need a Real Voice</h3>
+          <p class="body-sample muted">IBM Plex Sans Condensed keeps titles tight, serious, and memorable.</p>
+        </article>
+        <article class="specimen">
+          <span class="label">Body / UI Copy</span>
+          <p class="body-sample">
+            Source Sans 3 is clean enough for dense dashboards and forms. It does not call attention to itself. Good. That job belongs to the data and the decisions.
+          </p>
+        </article>
+        <article class="specimen">
+          <span class="label">Data / Ledger / Audit</span>
+          <p class="mono-sample">TXN-2026-04-301948
+USD 48,200.00
+APPROVAL_CHAIN=2/3
+RISK_SCORE=74</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Color System</h2>
+        <p>Color is restrained. Most of the UI lives in warm paper neutrals. Accent color is reserved for action, focus, and directional emphasis. Warnings and fraud states read fast without turning the whole product into a Christmas tree.</p>
+      </div>
+      <div class="swatch-grid">
+        <article class="swatch">
+          <div class="tone" style="background:#f3f0e8"></div>
+          <strong>Background</strong>
+          <code>#F3F0E8</code>
+        </article>
+        <article class="swatch">
+          <div class="tone" style="background:#fbfaf7"></div>
+          <strong>Surface</strong>
+          <code>#FBFAF7</code>
+        </article>
+        <article class="swatch">
+          <div class="tone" style="background:#161a1f"></div>
+          <strong>Primary Text</strong>
+          <code>#161A1F</code>
+        </article>
+        <article class="swatch">
+          <div class="tone" style="background:#5f6772"></div>
+          <strong>Muted Text</strong>
+          <code>#5F6772</code>
+        </article>
+        <article class="swatch">
+          <div class="tone" style="background:#0f4c5c"></div>
+          <strong>Primary Accent</strong>
+          <code>#0F4C5C</code>
+        </article>
+        <article class="swatch">
+          <div class="tone" style="background:#8c6a2b"></div>
+          <strong>Secondary Accent</strong>
+          <code>#8C6A2B</code>
+        </article>
+        <article class="swatch">
+          <div class="tone" style="background:#1f6b4f"></div>
+          <strong>Success</strong>
+          <code>#1F6B4F</code>
+        </article>
+        <article class="swatch">
+          <div class="tone" style="background:#b13a3a"></div>
+          <strong>Error</strong>
+          <code>#B13A3A</code>
+        </article>
+      </div>
+      <div class="component-grid" style="margin-top:16px">
+        <div class="component-box">
+          <span class="label">Buttons</span>
+          <div class="button-row">
+            <button class="btn primary">Approve transfer</button>
+            <button class="btn secondary">Review</button>
+            <button class="btn ghost">Export CSV</button>
+          </div>
+        </div>
+        <div class="component-box">
+          <span class="label">Inputs</span>
+          <div class="field-row">
+            <input class="field" value="Search account number">
+            <select class="field">
+              <option>All branches</option>
+            </select>
+          </div>
+        </div>
+        <div class="component-box">
+          <span class="label">Alerts</span>
+          <div class="alert-row">
+            <div class="alert success">Transfer settled</div>
+            <div class="alert warning">Manual review</div>
+            <div class="alert error">Fraud lock</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Dashboard Mockup</h2>
+        <p>The shell is safe on purpose. Operators should know where everything is. The personality comes from typographic hierarchy, material contrast, and the fact that the product looks built for money movement, not feature-marketing.</p>
+      </div>
+      <div class="shell">
+        <div class="app-shell">
+          <aside class="sidebar">
+            <div class="brand">
+              <span class="eyebrow">SCBS internal</span>
+              <strong>Core Banking Control</strong>
+              <span class="muted">Branch operations, approvals, audit</span>
+            </div>
+            <div class="nav-group">
+              <h3>Operations</h3>
+              <div class="nav-item active">Overview</div>
+              <div class="nav-item">Accounts</div>
+              <div class="nav-item">Transfers</div>
+              <div class="nav-item">Cash movements</div>
+            </div>
+            <div class="nav-group">
+              <h3>Risk</h3>
+              <div class="nav-item">Fraud review</div>
+              <div class="nav-item">Approval queue</div>
+              <div class="nav-item">Locked users</div>
+            </div>
+            <div class="nav-group">
+              <h3>Control</h3>
+              <div class="nav-item">Audit logs</div>
+              <div class="nav-item">Roles and access</div>
+              <div class="nav-item">Session review</div>
+            </div>
+            <div class="panel">
+              <span class="label">Memorable thing</span>
+              <p class="body-sample">This should not look like AI slop. So the product avoids the usual purple-gradient startup costume and leans into exactness instead.</p>
+            </div>
+          </aside>
+          <main class="main">
+            <div class="topbar">
+              <div>
+                <h3>Branch Liquidity Overview</h3>
+                <div class="context">Monday, 30 Apr 2026, 17:45 PKT, operator view for Karachi Central</div>
+              </div>
+              <div class="button-row">
+                <button class="btn ghost">Download report</button>
+                <button class="btn secondary">Open audit trail</button>
+                <button class="btn primary">Approve 4 queued items</button>
+              </div>
+            </div>
+
+            <div class="kpi-row">
+              <div class="kpi">
+                <span class="label">Available cash</span>
+                <strong>PKR 184,240,000</strong>
+                <span class="muted">Across 14 active ledgers</span>
+              </div>
+              <div class="kpi">
+                <span class="label">Pending approvals</span>
+                <strong>12 items</strong>
+                <span class="muted">4 high value transfers</span>
+              </div>
+              <div class="kpi">
+                <span class="label">Fraud review</span>
+                <strong>3 flagged</strong>
+                <span class="muted">2 require manager sign-off</span>
+              </div>
+              <div class="kpi">
+                <span class="label">Audit integrity</span>
+                <strong>Chain valid</strong>
+                <span class="muted">Last verified 17:42 PKT</span>
+              </div>
+            </div>
+
+            <div class="grid-two">
+              <section class="panel">
+                <span class="label">Recent high-sensitivity transactions</span>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Reference</th>
+                      <th>Account</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Risk</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span style="font-family:var(--mono)">TXN-20481</span></td>
+                      <td>Corporate payroll settlement</td>
+                      <td>PKR 48,200,000</td>
+                      <td><span class="status warning">Pending</span></td>
+                      <td><span class="status info">Manual review</span></td>
+                    </tr>
+                    <tr>
+                      <td><span style="font-family:var(--mono)">TXN-20477</span></td>
+                      <td>Merchant reserve release</td>
+                      <td>PKR 12,840,000</td>
+                      <td><span class="status success">Completed</span></td>
+                      <td><span class="status success">Cleared</span></td>
+                    </tr>
+                    <tr>
+                      <td><span style="font-family:var(--mono)">TXN-20472</span></td>
+                      <td>Inter-branch transfer</td>
+                      <td>PKR 31,400,000</td>
+                      <td><span class="status error">Held</span></td>
+                      <td><span class="status error">Fraud lock</span></td>
+                    </tr>
+                    <tr>
+                      <td><span style="font-family:var(--mono)">TXN-20465</span></td>
+                      <td>VIP customer withdrawal</td>
+                      <td>PKR 7,900,000</td>
+                      <td><span class="status success">Completed</span></td>
+                      <td><span class="status success">Cleared</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </section>
+
+              <section class="panel">
+                <span class="label">Approval queue</span>
+                <div class="list">
+                  <div class="list-item">
+                    <span class="dot warning"></span>
+                    <div>
+                      <strong>High-value transfer exceeded branch threshold</strong>
+                      <div class="muted">Manager + admin approval required before release.</div>
+                    </div>
+                    <span class="muted">17:38</span>
+                  </div>
+                  <div class="list-item">
+                    <span class="dot"></span>
+                    <div>
+                      <strong>Role change requested for teller account</strong>
+                      <div class="muted">Permissions move from read-only to transaction initiation.</div>
+                    </div>
+                    <span class="muted">17:16</span>
+                  </div>
+                  <div class="list-item">
+                    <span class="dot error"></span>
+                    <div>
+                      <strong>Login anomaly triggered session review</strong>
+                      <div class="muted">IP mismatch detected on privileged user session.</div>
+                    </div>
+                    <span class="muted">16:58</span>
+                  </div>
+                  <div class="list-item">
+                    <span class="dot success"></span>
+                    <div>
+                      <strong>Audit chain verification completed</strong>
+                      <div class="muted">No tamper evidence found across latest ledger events.</div>
+                    </div>
+                    <span class="muted">16:43</span>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div class="split-panel">
+              <section class="panel">
+                <span class="label">Fraud review snapshot</span>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Rule</th>
+                      <th>Case</th>
+                      <th>Score</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>New account velocity</td>
+                      <td>Transfer burst after opening</td>
+                      <td><span style="font-family:var(--mono)">74</span></td>
+                    </tr>
+                    <tr>
+                      <td>Threshold breach</td>
+                      <td>Single transfer over policy cap</td>
+                      <td><span style="font-family:var(--mono)">81</span></td>
+                    </tr>
+                    <tr>
+                      <td>Access anomaly</td>
+                      <td>Cross-IP privileged session</td>
+                      <td><span style="font-family:var(--mono)">69</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </section>
+
+              <section class="panel">
+                <span class="label">Audit trail excerpt</span>
+                <div class="mono-sample">17:42:15  USER#14  ACTION=CHAIN_VERIFY  STATUS=PASS
+17:39:08  USER#02  ACTION=APPROVAL_REQUEST  REF=TXN-20481
+17:31:44  USER#07  ACTION=LOCK_ACCOUNT  USER=customer_344
+17:25:19  USER#11  ACTION=TRANSFER_HOLD  REF=TXN-20472</div>
+              </section>
+            </div>
+          </main>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-head">
+        <h2>Auth And Control Surfaces</h2>
+        <p>Security views should feel native to the product, not like they were designed last. This preview keeps login, MFA, and role controls aligned with the same typographic and material system.</p>
+      </div>
+      <div class="component-grid">
+        <section class="panel">
+          <span class="label">Login screen</span>
+          <h3 style="margin:0 0 8px;font-family:var(--display);font-size:1.8rem;line-height:0.95;text-transform:uppercase;">Operator Login</h3>
+          <p class="body-sample muted">Access is monitored. All privileged actions are logged and chained.</p>
+          <div style="display:grid;gap:8px;margin-top:16px;">
+            <input class="field" value="Username">
+            <input class="field" value="Password">
+            <button class="btn primary">Continue to MFA</button>
+          </div>
+        </section>
+        <section class="panel">
+          <span class="label">MFA checkpoint</span>
+          <h3 style="margin:0 0 8px;font-family:var(--display);font-size:1.8rem;line-height:0.95;text-transform:uppercase;">Verify Device</h3>
+          <p class="body-sample muted">A six-digit code has been issued through the secure channel tied to this operator.</p>
+          <div style="display:grid;gap:8px;margin-top:16px;">
+            <input class="field" value="OTP code">
+            <div class="alert info">Session expires after 30 minutes of inactivity.</div>
+            <button class="btn primary">Verify and enter</button>
+          </div>
+        </section>
+        <section class="panel">
+          <span class="label">Role management</span>
+          <h3 style="margin:0 0 8px;font-family:var(--display);font-size:1.8rem;line-height:0.95;text-transform:uppercase;">Access Control</h3>
+          <table class="table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Role</th>
+                <th>State</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>fatima.k</td>
+                <td>Teller</td>
+                <td><span class="status success">Active</span></td>
+              </tr>
+              <tr>
+                <td>hamza.r</td>
+                <td>Manager</td>
+                <td><span class="status warning">Review</span></td>
+              </tr>
+              <tr>
+                <td>nadeem.a</td>
+                <td>Admin</td>
+                <td><span class="status success">Active</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
+      <p class="footnote">Spacing scale: 2, 4, 8, 16, 24, 32, 48. Border radius: 4px and 8px only. Motion: short 150ms to 250ms transitions, no decorative choreography.</p>
+    </section>
+  </div>
+
+  <script>
+    const toggle = document.getElementById("theme-toggle");
+    toggle.addEventListener("click", () => {
+      document.body.classList.toggle("dark");
+    });
+  </script>
+</body>
+</html>

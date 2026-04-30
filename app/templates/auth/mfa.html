@@ -2,7 +2,6 @@
 {% block title %}MFA Verification{% endblock %}
 {% block content %}
 <h1>Enter OTP</h1>
-<p>A 6-digit code has been generated. Check the console (dev mode).</p>
 <form method="POST">
   {{ form.hidden_tag() }}
   <label>OTP: <input type="text" name="otp" id="otp-input" maxlength="6" autocomplete="one-time-code"></label><br>

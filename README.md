@@ -12,12 +12,12 @@ A secure, role-based core banking system built with Python and Flask. This proje
 - **Double-Entry Ledger:** Ensures financial integrity without relying on stored balances.
 - **Fraud Detection:** Automatically flags suspicious transactions (e.g., large transfers, new account activity, rapid succession transfers).
 - **Tamper-Evident Audit Logs:** Cryptographically linked HMAC hash-chaining ensures logs cannot be silently altered.
-- **Security Best Practices:** Parameterized queries (SQLi prevention), Jinja2 auto-escaping (XSS prevention), Nonce-based replay attack prevention.
+- **Security Best Practices:** Parameterized queries (SQLi prevention), Jinja2 auto-escaping (XSS prevention), nonce-based replay attack prevention.
 
 ## Technology Stack
 
 - **Backend:** Python 3.11, Flask
-- **Database:** PostgreSQL, SQLAlchemy, psycopg2-binary
+- **Database:** SQLite, SQLAlchemy
 - **Extensions:** Flask-WTF, Flask-Login, Flask-Session, Flask-Migrate
 - **Security & Testing:** bcrypt, pytest, pytest-flask
 
@@ -27,8 +27,8 @@ Please see the [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md) file for a step-by
 
 ## Architecture
 
-The application uses a Layered Flask Architecture:
-`Routes (Blueprints) → Services → Repositories → PostgreSQL`
+The application uses a layered Flask architecture:
+`Routes (Blueprints) -> Services -> Repositories -> SQLite`
 
 Security controls are enforced at explicit layer boundaries:
 - Input validation in **Routes**.
