@@ -1,12 +1,39 @@
 {% extends "base.html" %}
 {% block title %}Deposit{% endblock %}
 {% block content %}
-<h1>Deposit to {{ account.account_number }}</h1>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  {{ form.nonce() }}
-  <label>Amount: <input type="number" name="amount" id="deposit-amount" step="0.01" min="0.01"></label><br>
-  <button type="submit" id="deposit-btn">Deposit</button>
-</form>
-<a href="{{ url_for('accounts.account_detail', account_id=account.id) }}">Back</a>
+  <section class="page-header">
+    <div class="page-header-main">
+      <div>
+        <span class="eyebrow">Deposit flow</span>
+        <h1 class="page-title">Deposit To {{ account.account_number }}</h1>
+      </div>
+      <div class="page-actions">
+        <a class="btn btn-ghost" href="{{ url_for('accounts.account_detail', account_id=account.id) }}">Back To Account</a>
+      </div>
+    </div>
+    <p class="page-subtitle">Post an inbound amount to this account. Replay protection is enforced through a one-time transaction nonce.</p>
+  </section>
+
+  <div class="content-grid">
+    <form class="panel form-grid" method="POST">
+      {{ form.hidden_tag() }}
+      <div class="field-block">
+        <label class="field-label" for="deposit-amount">Amount</label>
+        {{ form.amount(id="deposit-amount", class_="field-input", step="0.01", min="0.01", placeholder="0.00") }}
+        {% if form.amount.errors %}
+          <div class="field-errors">
+            {% for error in form.amount.errors %}<span>{{ error }}</span>{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <button class="btn btn-primary" type="submit" id="deposit-btn">Post Deposit</button>
+    </form>
+
+    <aside class="panel">
+      <span class="panel-kicker">Control note</span>
+      <h2 class="panel-title">Why This Form Is Tight</h2>
+      <p class="helper-copy">Money movement forms should do one thing clearly. The page keeps just the account target, the amount, and the commit action in front of the operator.</p>
+      <p class="footer-note">Target account {{ account.account_number }} | {{ account.account_type.value|capitalize }}</p>
+    </aside>
+  </div>
 {% endblock %}

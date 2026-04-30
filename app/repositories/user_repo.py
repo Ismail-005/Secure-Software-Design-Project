@@ -7,6 +7,9 @@ class UserRepository:
     def find_by_username(self, username: str) -> User | None:
         return User.query.filter_by(username=username).first()
 
+    def find_by_email(self, email: str) -> User | None:
+        return User.query.filter_by(email=email).first()
+
     def find_by_id(self, user_id: int) -> User | None:
         return db.session.get(User, user_id)
 

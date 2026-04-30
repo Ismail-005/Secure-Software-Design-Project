@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, abort
+from flask import Blueprint, render_template, redirect, url_for, flash, abort, request
 from flask_login import login_required, current_user
 from app.middleware.rbac import require_role
 from app.middleware.session_guard import session_guard
@@ -29,5 +29,7 @@ def account_detail(account_id):
     from app.repositories.transaction_repo import TransactionRepository
     txns = TransactionRepository().find_by_account(account_id)
     balance = svc.get_balance(account_id)
+    origin = request.args.get('origin', '')
     return render_template('accounts/detail.html',
-                           account=account, balance=balance, transactions=txns)
+                           account=account, balance=balance, transactions=txns,
+                           origin=origin)

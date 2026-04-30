@@ -1,20 +1,52 @@
 {% extends "base.html" %}
 {% block title %}Fraud Review{% endblock %}
 {% block content %}
-<h1>Fraud-Flagged Transactions</h1>
-<table border="1" cellpadding="4">
-  <tr><th>ID</th><th>Type</th><th>Amount</th><th>From</th><th>To</th><th>Date</th></tr>
-  {% for txn in transactions %}
-  <tr>
-    <td>{{ txn.id }}</td>
-    <td>{{ txn.transaction_type.value }}</td>
-    <td>${{ txn.amount }}</td>
-    <td>{{ txn.from_account_id }}</td>
-    <td>{{ txn.to_account_id }}</td>
-    <td>{{ txn.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-  </tr>
-  {% else %}
-  <tr><td colspan="6">No fraud-flagged transactions.</td></tr>
-  {% endfor %}
-</table>
+  <section class="page-header">
+    <div class="page-header-main">
+      <div>
+        <span class="eyebrow">Risk desk</span>
+        <h1 class="page-title">Fraud Review Queue</h1>
+      </div>
+    </div>
+    <p class="page-subtitle">Review transactions that crossed automated fraud thresholds before they blend into ordinary ledger activity.</p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <span class="panel-kicker">Flagged transactions</span>
+        <h2 class="panel-title">Escalated Cases</h2>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for txn in transactions %}
+            <tr>
+              <td class="mono">TXN-{{ txn.id }}</td>
+              <td>{{ txn.transaction_type.value|capitalize }}</td>
+              <td class="mono">${{ '%.2f'|format(txn.amount) }}</td>
+              <td class="mono">{{ txn.from_account_id or 'n/a' }}</td>
+              <td class="mono">{{ txn.to_account_id or 'n/a' }}</td>
+              <td>{{ txn.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6">No fraud-flagged transactions are waiting for review.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
 {% endblock %}

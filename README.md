@@ -5,7 +5,7 @@ A secure, role-based core banking system built with Python and Flask. This proje
 ## Features
 
 - **Role-Based Access Control (RBAC):** Supports 4 user roles: Customer, Teller, Manager, and Admin.
-- **Secure Authentication:** Passwords hashed with `bcrypt`, combined with simulated Multi-Factor Authentication (OTP).
+- **Secure Authentication:** Passwords hashed with `bcrypt`, combined with a demo OTP verification step for coursework flows.
 - **Brute-Force Protection:** Account lockout after 5 failed login attempts.
 - **Rate Limiting & Session Management:** Prevents abuse and enforces secure, time-bound, IP-bound sessions.
 - **Atomic Transactions:** Ensures secure deposit, withdrawal, and transfer operations.

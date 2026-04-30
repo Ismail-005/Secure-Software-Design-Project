@@ -1,11 +1,49 @@
 {% extends "base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Sign In{% endblock %}
 {% block content %}
-<h1>Login</h1>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  <label>Username: <input type="text" name="username" id="username"></label><br>
-  <label>Password: <input type="password" name="password" id="password"></label><br>
-  <button type="submit" id="login-btn">Login</button>
-</form>
+  <div class="auth-hero">
+    <div>
+      <span class="panel-kicker">Secure access</span>
+      <h1 class="page-title">Sign In</h1>
+      <p class="auth-copy">Enter your credentials to access accounts, transfers, fraud review, and audit-controlled workflows.</p>
+    </div>
+    <div class="auth-mode" aria-label="Authentication mode">
+      <span class="auth-mode-item is-active">Sign In</span>
+      <a class="auth-mode-item" href="{{ url_for('auth.signup') }}">Create Account</a>
+    </div>
+  </div>
+
+  <form class="form-grid auth-form" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="field-block">
+      <label class="field-label" for="username">Username</label>
+      {{ form.username(id="username", class_="field-input", autocomplete="username", placeholder="admin or alice") }}
+      {% if form.username.errors %}
+        <div class="field-errors">
+          {% for error in form.username.errors %}<span>{{ error }}</span>{% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    <div class="field-block">
+      <label class="field-label" for="password">Password</label>
+      {{ form.password(id="password", class_="field-input", autocomplete="current-password", placeholder="Enter password") }}
+      {% if form.password.errors %}
+        <div class="field-errors">
+          {% for error in form.password.errors %}<span>{{ error }}</span>{% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    <button class="btn btn-primary" type="submit" id="login-btn">Continue To Verification</button>
+  </form>
+
+  <div class="auth-assurance">
+    <div>
+      <strong>Session protected</strong>
+      <span>IP-bound session guard and timeout controls activate after verification.</span>
+    </div>
+    <div>
+      <strong>Audit visible</strong>
+      <span>Successful and failed authentication events are written to the audit log.</span>
+    </div>
+  </div>
 {% endblock %}

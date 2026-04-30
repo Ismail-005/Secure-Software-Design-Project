@@ -5,26 +5,100 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SCBS - {% block title %}{% endblock %}</title>
   <meta name="description" content="Secure Core Banking System">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </head>
 <body>
-  {% if current_user.is_authenticated %}
-    <nav>
-      Hello, {{ current_user.username }} ({{ current_user.role.value }}) |
-      <a href="{{ url_for('auth.logout') }}">Logout</a>
-      {% if current_user.role.value in ['admin', 'manager'] %}
-        | <a href="{{ url_for('admin.audit_logs') }}">Audit Logs</a>
-        | <a href="{{ url_for('admin.fraud_review') }}">Fraud Review</a>
-      {% endif %}
-      {% if current_user.role.value == 'admin' %}
-        | <a href="{{ url_for('admin.users') }}">Users</a>
-      {% endif %}
-    </nav>
+  {% set authenticated = current_user.is_authenticated %}
+  {% set endpoint = request.endpoint or '' %}
+
+  {% if authenticated %}
+    <div class="app-shell">
+      <aside class="app-sidebar">
+        <div class="brand-lockup">
+          <span class="eyebrow">Secure Core Banking System</span>
+          <h1 class="brand-title">Core Banking Control</h1>
+          <p class="brand-copy">Approvals, account review, transfer monitoring, and audit visibility in one operator workspace.</p>
+        </div>
+
+        <nav class="sidebar-section" aria-label="Primary">
+          <h2 class="sidebar-heading">Workspace</h2>
+          <a class="sidebar-link{% if endpoint == 'accounts.dashboard' %} is-active{% endif %}" href="{{ url_for('accounts.dashboard') }}">Dashboard</a>
+          {% if current_user.role.value in ['teller', 'manager', 'admin'] %}
+            <a class="sidebar-link{% if endpoint == 'admin.all_accounts' %} is-active{% endif %}" href="{{ url_for('admin.all_accounts') }}">All Accounts</a>
+          {% endif %}
+        </nav>
+
+        {% if current_user.role.value in ['manager', 'admin'] %}
+          <nav class="sidebar-section" aria-label="Risk">
+            <h2 class="sidebar-heading">Risk</h2>
+            <a class="sidebar-link{% if endpoint == 'admin.fraud_review' %} is-active{% endif %}" href="{{ url_for('admin.fraud_review') }}">Fraud Review</a>
+            <a class="sidebar-link{% if endpoint == 'admin.audit_logs' %} is-active{% endif %}" href="{{ url_for('admin.audit_logs') }}">Audit Logs</a>
+          </nav>
+        {% endif %}
+
+        {% if current_user.role.value == 'admin' %}
+          <nav class="sidebar-section" aria-label="Control">
+            <h2 class="sidebar-heading">Control</h2>
+            <a class="sidebar-link{% if endpoint == 'admin.users' %} is-active{% endif %}" href="{{ url_for('admin.users') }}">Roles And Access</a>
+          </nav>
+        {% endif %}
+
+        <div class="sidebar-user">
+          <div>
+            <strong>{{ current_user.username }}</strong>
+            <div class="meta-copy">{{ current_user.role.value|capitalize }} session</div>
+          </div>
+          <div class="footer-note">IP-bound session guard and audit logging are active.</div>
+        </div>
+
+        <div class="sidebar-foot">
+          <button class="btn btn-ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle dark mode"></button>
+          <a class="btn btn-secondary" href="{{ url_for('auth.logout') }}">Sign Out</a>
+        </div>
+      </aside>
+
+      <main class="app-main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-stack" aria-live="polite">
+              {% for category, message in messages %}
+                <div class="flash {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+  {% else %}
+    <main class="auth-shell">
+      <div class="auth-card">
+        <div class="auth-card-head">
+          <span class="eyebrow">Secure Core Banking System</span>
+          <button class="btn btn-ghost theme-toggle" type="button" data-theme-toggle aria-label="Toggle dark mode"></button>
+        </div>
+        <div>
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <div class="flash-stack" aria-live="polite" style="margin-top: 16px;">
+                {% for category, message in messages %}
+                  <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
+        </div>
   {% endif %}
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% for category, message in messages %}
-      <p class="{{ category }}">{{ message }}</p>
-    {% endfor %}
-  {% endwith %}
-  {% block content %}{% endblock %}
+
+        {% block content %}{% endblock %}
+
+  {% if authenticated %}
+      </main>
+    </div>
+  {% else %}
+      </div>
+    </main>
+  {% endif %}
 </body>
 </html>

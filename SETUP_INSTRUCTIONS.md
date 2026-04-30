@@ -8,6 +8,7 @@ Set a strong application secret key before you run the app. The database now def
 SECRET_KEY=YOUR_RANDOM_SECRET_KEY
 DATABASE_URL=sqlite:///scbs.db
 TEST_DATABASE_URL=sqlite:///scbs_test.db
+DEMO_SHOW_OTP=true
 ```
 
 ### 2. Activate Virtual Environment & Install Dependencies
@@ -33,7 +34,7 @@ flask --app run.py db upgrade
 ### 4. Seed the Initial Data
 Populate the database with the initial Admin and Customer accounts so you can log in:
 ```bash
-python app/seed.py
+  python -m app.seed
 ```
 *(This will print a confirmation that it created the users `admin` and `alice`.)*
 
@@ -43,6 +44,7 @@ Start the Flask development server:
 flask --app run.py run
 ```
 You can now open your browser and go to `http://127.0.0.1:5000` to use the application.
+With `DEMO_SHOW_OTP=true`, the MFA screen will display the current login code inside the app so the coursework flow remains usable without SMS, email, or an authenticator app.
 
 ### 6. Run the Tests
 To verify the application behavior, run:

@@ -1,13 +1,48 @@
 {% extends "base.html" %}
 {% block title %}Transfer{% endblock %}
 {% block content %}
-<h1>Transfer from {{ account.account_number }}</h1>
-<form method="POST">
-  {{ form.hidden_tag() }}
-  {{ form.nonce() }}
-  <label>To Account Number: <input type="text" name="to_account_number" id="to-account-number"></label><br>
-  <label>Amount: <input type="number" name="amount" id="transfer-amount" step="0.01" min="0.01"></label><br>
-  <button type="submit" id="transfer-btn">Transfer</button>
-</form>
-<a href="{{ url_for('accounts.account_detail', account_id=account.id) }}">Back</a>
+  <section class="page-header">
+    <div class="page-header-main">
+      <div>
+        <span class="eyebrow">Transfer flow</span>
+        <h1 class="page-title">Transfer From {{ account.account_number }}</h1>
+      </div>
+      <div class="page-actions">
+        <a class="btn btn-ghost" href="{{ url_for('accounts.account_detail', account_id=account.id) }}">Back To Account</a>
+      </div>
+    </div>
+    <p class="page-subtitle">Move funds to another account number. Destination lookup happens before the transfer is committed.</p>
+  </section>
+
+  <div class="content-grid">
+    <form class="panel form-grid" method="POST">
+      {{ form.hidden_tag() }}
+      <div class="field-block">
+        <label class="field-label" for="to-account-number">Destination Account Number</label>
+        {{ form.to_account_number(id="to-account-number", class_="field-input", placeholder="Enter target account") }}
+        {% if form.to_account_number.errors %}
+          <div class="field-errors">
+            {% for error in form.to_account_number.errors %}<span>{{ error }}</span>{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="field-block">
+        <label class="field-label" for="transfer-amount">Amount</label>
+        {{ form.amount(id="transfer-amount", class_="field-input", step="0.01", min="0.01", placeholder="0.00") }}
+        {% if form.amount.errors %}
+          <div class="field-errors">
+            {% for error in form.amount.errors %}<span>{{ error }}</span>{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <button class="btn btn-primary" type="submit" id="transfer-btn">Initiate Transfer</button>
+    </form>
+
+    <aside class="panel">
+      <span class="panel-kicker">Fraud posture</span>
+      <h2 class="panel-title">Transfer Review</h2>
+      <p class="helper-copy">Transfers are the highest-sensitivity customer action in this app, so the layout stays strict: destination, amount, nonce, commit.</p>
+      <p class="footer-note">Fraud checks evaluate velocity, threshold breaches, and new-account behavior after submission.</p>
+    </aside>
+  </div>
 {% endblock %}
