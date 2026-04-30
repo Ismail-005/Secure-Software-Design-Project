@@ -73,7 +73,13 @@
     }
 
     a {
-      color: inherit;
+      color: var(--accent);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+    }
+
+    a:visited {
+      color: var(--secondary);
     }
 
     button,
@@ -196,7 +202,13 @@
       color: var(--text);
       border-radius: var(--radius-sm);
       padding: 8px 12px;
+      min-height: 44px;
       cursor: pointer;
+      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+    }
+
+    .toggle:hover {
+      border-color: var(--accent);
     }
 
     .section {
@@ -474,10 +486,14 @@
     }
 
     .nav-item {
+      display: block;
       padding: 10px 12px;
       border-radius: var(--radius-sm);
       color: var(--muted);
       border: 1px solid transparent;
+      text-decoration: none;
+      min-height: 44px;
+      transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
     }
 
     .nav-item.active {
@@ -485,6 +501,14 @@
       border-color: var(--border);
       color: var(--text);
       font-weight: 600;
+    }
+
+    .nav-item:hover,
+    .nav-item:focus-visible {
+      border-color: var(--border);
+      background: var(--surface);
+      color: var(--text);
+      outline: none;
     }
 
     .main {
@@ -668,7 +692,7 @@
     <section class="hero">
       <div>
         <div class="eyebrow">Secure Core Banking System</div>
-        <h1>No Slop. No Theater. Real Banking Software.</h1>
+        <h1>Built For Review, Approval, And Control.</h1>
         <p>
           This direction treats SCBS like internal financial infrastructure, not a generic startup dashboard.
           Sharp type, warm neutral surfaces, exact numerics, and controls that look built for operators who move money and answer for it.
@@ -699,12 +723,12 @@
     </section>
 
     <div class="toolbar">
-      <div class="pill-row">
-        <span class="pill">Internal dashboard</span>
-        <span class="pill">Banking operations</span>
-        <span class="pill">Anti AI slop</span>
-        <span class="pill">Warm neutral palette</span>
-      </div>
+        <div class="pill-row">
+          <span class="pill">Internal dashboard</span>
+          <span class="pill">Banking operations</span>
+          <span class="pill">Approval workflows</span>
+          <span class="pill">Warm neutral palette</span>
+        </div>
       <button class="toggle" id="theme-toggle" type="button" aria-label="Toggle light and dark mode">
         Toggle light / dark
       </button>
@@ -793,15 +817,21 @@ RISK_SCORE=74</p>
             <button class="btn ghost">Export CSV</button>
           </div>
         </div>
-        <div class="component-box">
-          <span class="label">Inputs</span>
-          <div class="field-row">
-            <input class="field" value="Search account number">
-            <select class="field">
-              <option>All branches</option>
-            </select>
+          <div class="component-box">
+            <span class="label">Inputs</span>
+            <div class="field-row" style="align-items:end;">
+              <label class="field-block">
+                <span class="field-label">Search</span>
+                <input class="field" type="text" placeholder="Account number">
+              </label>
+              <label class="field-block">
+                <span class="field-label">Branch</span>
+                <select class="field">
+                  <option>All branches</option>
+                </select>
+              </label>
+            </div>
           </div>
-        </div>
         <div class="component-box">
           <span class="label">Alerts</span>
           <div class="alert-row">
@@ -828,26 +858,26 @@ RISK_SCORE=74</p>
             </div>
             <div class="nav-group">
               <h3>Operations</h3>
-              <div class="nav-item active">Overview</div>
-              <div class="nav-item">Accounts</div>
-              <div class="nav-item">Transfers</div>
-              <div class="nav-item">Cash movements</div>
+              <a class="nav-item active" href="#overview">Overview</a>
+              <a class="nav-item" href="#accounts">Accounts</a>
+              <a class="nav-item" href="#transfers">Transfers</a>
+              <a class="nav-item" href="#cash-movements">Cash movements</a>
             </div>
             <div class="nav-group">
               <h3>Risk</h3>
-              <div class="nav-item">Fraud review</div>
-              <div class="nav-item">Approval queue</div>
-              <div class="nav-item">Locked users</div>
+              <a class="nav-item" href="#fraud-review">Fraud review</a>
+              <a class="nav-item" href="#approval-queue">Approval queue</a>
+              <a class="nav-item" href="#locked-users">Locked users</a>
             </div>
             <div class="nav-group">
               <h3>Control</h3>
-              <div class="nav-item">Audit logs</div>
-              <div class="nav-item">Roles and access</div>
-              <div class="nav-item">Session review</div>
+              <a class="nav-item" href="#audit-logs">Audit logs</a>
+              <a class="nav-item" href="#roles-access">Roles and access</a>
+              <a class="nav-item" href="#session-review">Session review</a>
             </div>
             <div class="panel">
               <span class="label">Memorable thing</span>
-              <p class="body-sample">This should not look like AI slop. So the product avoids the usual purple-gradient startup costume and leans into exactness instead.</p>
+              <p class="body-sample">The interface should feel deliberate, disciplined, and hard to confuse with generic software. Every screen should communicate control before decoration.</p>
             </div>
           </aside>
           <main class="main">
