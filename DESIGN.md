@@ -58,6 +58,7 @@
 - **Grid:** 12-column content grid on desktop, collapsing to 6 and then 1 on smaller screens.
 - **Max content width:** `1600px`
 - **Border radius:** `4px` for controls, `8px` for panels and grouped containers, `9999px` only for status pills.
+- **Surface treatment:** Use borders and tonal contrast before shadows. KPI summaries should read as ruled data rails, not floating card mosaics.
 
 ## Motion
 - **Approach:** Minimal-functional.
@@ -79,6 +80,8 @@
 - No generic three-column feature-grid marketing patterns inside the app.
 - No oversized rounded cards or bubbly UI.
 - Avoid using accent color as a blanket fill. Most surfaces should stay neutral.
+- Prefer border-defined structure over decorative shadows.
+- Do not build dashboard summaries as a wall of isolated cards unless each card is itself the interaction.
 - Keep tables dense, legible, and aligned. This is banking software. Sloppy spacing ruins the whole thing.
 
 ## Decisions Log

@@ -24,7 +24,6 @@
       --warning: #b06a1e;
       --error: #b13a3a;
       --info: #275d8c;
-      --shadow: 0 1px 0 rgba(22, 26, 31, 0.04);
       --radius-sm: 4px;
       --radius-md: 8px;
       --space-2xs: 2px;
@@ -54,7 +53,6 @@
       --warning: #d09346;
       --error: #d66a6a;
       --info: #6a9fcb;
-      --shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
     }
 
     * {
@@ -148,11 +146,8 @@
     }
 
     .stat-strip > div {
-      border: 1px solid var(--border);
-      background: var(--surface);
-      padding: var(--space-md);
-      border-radius: var(--radius-md);
-      box-shadow: var(--shadow);
+      border-top: 2px solid var(--text);
+      padding: var(--space-md) 0 0;
     }
 
     .stat-strip strong,
@@ -265,7 +260,6 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      box-shadow: var(--shadow);
     }
 
     .specimen,
@@ -528,10 +522,9 @@
     }
 
     .kpi {
-      background: var(--surface-2);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-md);
-      padding: var(--space-md);
+      background: transparent;
+      border-top: 2px solid var(--text);
+      padding: var(--space-md) 0 0;
     }
 
     .kpi strong {
