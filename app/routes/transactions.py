@@ -39,7 +39,7 @@ def deposit(account_id):
             txn_svc.deposit(account_id, form.amount.data,
                             form.nonce.data, current_user.id, request.remote_addr)
             db.session.commit()
-            flash(f'Deposited ${form.amount.data:.2f} successfully.', 'success')
+            flash(f'Deposited PKR {form.amount.data:.2f} successfully.', 'success')
             return redirect(url_for('accounts.account_detail', account_id=account_id))
         except ValueError as e:
             db.session.rollback()
@@ -64,7 +64,7 @@ def withdraw(account_id):
             txn_svc.withdraw(account_id, form.amount.data,
                              form.nonce.data, current_user.id, request.remote_addr)
             db.session.commit()
-            flash(f'Withdrew ${form.amount.data:.2f} successfully.', 'success')
+            flash(f'Withdrew PKR {form.amount.data:.2f} successfully.', 'success')
             return redirect(url_for('accounts.account_detail', account_id=account_id))
         except ValueError as e:
             db.session.rollback()
@@ -94,7 +94,7 @@ def transfer(account_id):
                 txn_svc.transfer(account_id, to_account.id, form.amount.data,
                                  form.nonce.data, current_user.id, request.remote_addr)
                 db.session.commit()
-                flash(f'Transferred ${form.amount.data:.2f} successfully.', 'success')
+                flash(f'Transferred PKR {form.amount.data:.2f} successfully.', 'success')
                 return redirect(url_for('accounts.account_detail', account_id=account_id))
             except ValueError as e:
                 db.session.rollback()

@@ -33,7 +33,7 @@
       </div>
       <div class="kpi">
         <span class="kpi-label">Visible Balance</span>
-        <span class="kpi-value mono">${{ '%.2f'|format(ns.total) }}</span>
+        <span class="kpi-value mono">PKR {{ '%.2f'|format(ns.total) }}</span>
         <div class="meta-copy">Ledger-derived, not stored balances.</div>
       </div>
       <div class="kpi">
@@ -66,7 +66,7 @@
                 <div class="account-meta">
                   <span>{{ account.account_type.value|capitalize }}</span>
                   <span class="status-pill {% if account.status.value == 'active' %}success{% elif account.status.value == 'frozen' %}warning{% else %}error{% endif %}">{{ account.status.value|capitalize }}</span>
-                  <span class="inline-stat">Balance: ${{ '%.2f'|format(balances[account.id]) }}</span>
+                  <span class="inline-stat">Balance: PKR {{ '%.2f'|format(balances[account.id]) }}</span>
                 </div>
               </div>
               <div class="account-actions">

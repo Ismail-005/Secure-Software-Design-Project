@@ -34,7 +34,7 @@
       </div>
       <div class="kpi">
         <span class="kpi-label">Current Balance</span>
-        <span class="kpi-value mono">${{ '%.2f'|format(balance) }}</span>
+        <span class="kpi-value mono">PKR {{ '%.2f'|format(balance) }}</span>
       </div>
       <div class="kpi">
         <span class="kpi-label">Transaction Count</span>
@@ -96,7 +96,7 @@
               <td>{{ txn.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
               <td class="mono">TXN-{{ txn.id }}</td>
               <td>{{ txn.transaction_type.value|capitalize }}</td>
-              <td class="mono">${{ '%.2f'|format(txn.amount) }}</td>
+              <td class="mono">PKR {{ '%.2f'|format(txn.amount) }}</td>
               <td>
                 <span class="status-pill {% if txn.status.value == 'completed' %}success{% elif txn.status.value == 'pending' %}warning{% else %}error{% endif %}">{{ txn.status.value|capitalize }}</span>
               </td>
