@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}User Management{% endblock %}
+{% block content %}
+  <section class="page-header">
+    <div class="page-header-main">
+      <div>
+        <span class="eyebrow">Access control</span>
+        <h1 class="page-title">Roles And User State</h1>
+      </div>
+    </div>
+    <p class="page-subtitle">Manage role assignments and long-term account locks from one high-trust administration surface.</p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <span class="panel-kicker">Directory</span>
+        <h2 class="panel-title">User Registry</h2>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Locked Until</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for user in users %}
+            {% set is_locked = user.locked_until and user.locked_until > now %}
+            <tr>
+              <td class="mono">{{ user.id }}</td>
+              <td>{{ user.username }}</td>
+              <td><span class="status-pill info">{{ user.role.value|capitalize }}</span></td>
+              <td>
+                {% if is_locked %}
+                  <span class="status-pill error">Locked</span>
+                  <span class="mono">{{ user.locked_until.strftime('%Y-%m-%d %H:%M') }}</span>
+                {% else %}
+                  <span class="status-pill success">Active</span>
+                {% endif %}
+              </td>
+              <td>
+                <div class="stack" style="gap: 8px;">
+                  <form class="form-grid" method="POST" action="{{ url_for('admin.update_role', user_id=user.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <div class="field-block">
+                      <label class="field-label" for="role-{{ user.id }}">Role</label>
+                      <select class="field-select" id="role-{{ user.id }}" name="role">
+                        {% for r in ['customer','teller','manager','admin'] %}
+                          <option value="{{ r }}" {% if user.role.value == r %}selected{% endif %}>{{ r|capitalize }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                    <button class="btn btn-secondary" type="submit">Update Role</button>
+                  </form>
+                  <form method="POST" action="{{ url_for('admin.lock_user', user_id=user.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button class="btn btn-primary" type="submit">Lock User</button>
+                  </form>
+                  {% if is_locked %}
+                    <form method="POST" action="{{ url_for('admin.unlock_user', user_id=user.id) }}">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button class="btn btn-secondary" type="submit">Unlock User</button>
+                    </form>
+                  {% endif %}
+                </div>
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5">No users were found in the registry.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

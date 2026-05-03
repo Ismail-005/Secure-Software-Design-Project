@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block title %}Account {{ account.account_number }}{% endblock %}
+{% block content %}
+  <section class="page-header">
+    <div class="page-header-main">
+      <div>
+        <span class="eyebrow">Account inspection</span>
+        <h1 class="page-title">Account {{ account.account_number }}</h1>
+      </div>
+      <div class="page-actions">
+        {% if origin == 'all_accounts' and current_user.role.value in ['teller', 'manager', 'admin'] %}
+          <a class="btn btn-ghost" href="{{ url_for('admin.all_accounts') }}">Back To Portfolio</a>
+        {% else %}
+          <a class="btn btn-ghost" href="{{ url_for('accounts.dashboard') }}">Back To Dashboard</a>
+        {% endif %}
+        {% if account.user_id == current_user.id %}
+          <a class="btn btn-secondary" href="{{ url_for('transactions.deposit', account_id=account.id) }}">Deposit</a>
+          <a class="btn btn-secondary" href="{{ url_for('transactions.withdraw', account_id=account.id) }}">Withdraw</a>
+          <a class="btn btn-primary" href="{{ url_for('transactions.transfer', account_id=account.id) }}">Transfer</a>
+        {% endif %}
+      </div>
+    </div>
+    <p class="page-subtitle">Review account state, current balance, and recent movement history from one operator-grade ledger view.</p>
+    <div class="kpi-row">
+      <div class="kpi">
+        <span class="kpi-label">Account Type</span>
+        <span class="kpi-value">{{ account.account_type.value|capitalize }}</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Status</span>
+        <span class="kpi-value">
+          <span class="status-pill {% if account.status.value == 'active' %}success{% elif account.status.value == 'frozen' %}warning{% else %}error{% endif %}">{{ account.status.value|capitalize }}</span>
+        </span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Current Balance</span>
+        <span class="kpi-value mono">PKR {{ '%.2f'|format(balance) }}</span>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Transaction Count</span>
+        <span class="kpi-value mono">{{ transactions|length }}</span>
+      </div>
+    </div>
+  </section>
+
+  <div class="split-grid">
+    <section class="panel">
+      <span class="panel-kicker">Account posture</span>
+      <h2 class="panel-title">Ledger Summary</h2>
+      <div class="stack">
+        <div>
+          <strong class="mono">{{ account.account_number }}</strong>
+          <div class="meta-copy">Owner ID {{ account.user_id }} | Created {{ account.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+        </div>
+        <p class="helper-copy">This balance is reconstructed from ledger entries. That keeps movement history and financial integrity readable from the same source of truth.</p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <span class="panel-kicker">Available actions</span>
+      <h2 class="panel-title">Money Movement</h2>
+      <div class="account-actions" style="justify-content:flex-start;">
+        {% if account.user_id == current_user.id %}
+          <a class="btn btn-secondary" href="{{ url_for('transactions.deposit', account_id=account.id) }}">Post Deposit</a>
+          <a class="btn btn-secondary" href="{{ url_for('transactions.withdraw', account_id=account.id) }}">Post Withdrawal</a>
+          <a class="btn btn-primary" href="{{ url_for('transactions.transfer', account_id=account.id) }}">Initiate Transfer</a>
+        {% else %}
+          <p class="helper-copy">This account is visible for review, but transaction controls are limited to the owner-facing session.</p>
+        {% endif %}
+      </div>
+    </section>
+  </div>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <span class="panel-kicker">Activity</span>
+        <h2 class="panel-title">Recent Transactions</h2>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Reference</th>
+            <th>Type</th>
+            <th>Amount</th>
+            <th>Status</th>
+            <th>Fraud</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for txn in transactions %}
+            <tr>
+              <td>{{ txn.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+              <td class="mono">TXN-{{ txn.id }}</td>
+              <td>{{ txn.transaction_type.value|capitalize }}</td>
+              <td class="mono">PKR {{ '%.2f'|format(txn.amount) }}</td>
+              <td>
+                <span class="status-pill {% if txn.status.value == 'completed' %}success{% elif txn.status.value == 'pending' %}warning{% else %}error{% endif %}">{{ txn.status.value|capitalize }}</span>
+              </td>
+              <td>
+                {% if txn.fraud_flagged %}
+                  <span class="status-pill error">Flagged</span>
+                {% else %}
+                  <span class="status-pill success">Clear</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="6">No transactions have been posted to this account yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

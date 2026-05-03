@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Audit Logs{% endblock %}
+{% block content %}
+  <section class="page-header">
+    <div class="page-header-main">
+      <div>
+        <span class="eyebrow">Audit review</span>
+        <h1 class="page-title">Audit Logs</h1>
+      </div>
+    </div>
+    <p class="page-subtitle">Inspect recent security and transaction events with timestamps, actor references, IP data, and attached details.</p>
+  </section>
+
+  <section class="panel">
+    <div class="panel-heading">
+      <div>
+        <span class="panel-kicker">Chain visibility</span>
+        <h2 class="panel-title">Recent Events</h2>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>IP</th>
+            <th>Details</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for log in logs %}
+            <tr>
+              <td>{{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+              <td>
+                {% if log.user %}
+                  {{ log.user.username }} <span class="mono">#{{ log.user_id }}</span>
+                {% elif log.details and log.details.get('username') %}
+                  {{ log.details.get('username') }} <span class="mono">SYSTEM</span>
+                {% else %}
+                  <span class="mono">SYSTEM</span>
+                {% endif %}
+              </td>
+              <td><span class="status-pill info">{{ log.action }}</span></td>
+              <td class="mono">{{ log.ip_address or 'n/a' }}</td>
+              <td class="mono">{{ log.details or '{}' }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5">No audit logs were found.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}

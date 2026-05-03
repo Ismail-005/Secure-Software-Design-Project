@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}{% if request.endpoint == 'admin.all_accounts' %}Account Portfolio{% else %}Dashboard{% endif %}{% endblock %}
+{% block content %}
+  {% set ns = namespace(total=0) %}
+  {% for balance in balances.values() %}
+    {% set ns.total = ns.total + balance %}
+  {% endfor %}
+  <section class="page-header">
+    <div class="page-header-main">
+      <div>
+        <span class="eyebrow">{% if request.endpoint == 'admin.all_accounts' %}Institution view{% else %}Operator dashboard{% endif %}</span>
+        <h1 class="page-title">{% if request.endpoint == 'admin.all_accounts' %}Account Portfolio{% else %}My Accounts{% endif %}</h1>
+      </div>
+      <div class="page-actions">
+        {% if current_user.role.value in ['manager', 'admin'] %}
+          <a class="btn btn-secondary" href="{{ url_for('admin.audit_logs') }}">Audit Logs</a>
+          <a class="btn btn-primary" href="{{ url_for('admin.fraud_review') }}">Fraud Review</a>
+        {% endif %}
+      </div>
+    </div>
+    <p class="page-subtitle">
+      {% if request.endpoint == 'admin.all_accounts' %}
+        Review account health, balances, and movement readiness across the institution from one controlled workspace.
+      {% else %}
+        Monitor balances, review activity, and move money through secured deposit, withdrawal, and transfer flows.
+      {% endif %}
+    </p>
+    <div class="kpi-row">
+      <div class="kpi">
+        <span class="kpi-label">Tracked Accounts</span>
+        <span class="kpi-value mono">{{ accounts|length }}</span>
+        <div class="meta-copy">{% if request.endpoint == 'admin.all_accounts' %}Institution-wide view{% else %}Accounts assigned to this user{% endif %}</div>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Visible Balance</span>
+        <span class="kpi-value mono">PKR {{ '%.2f'|format(ns.total) }}</span>
+        <div class="meta-copy">Ledger-derived, not stored balances.</div>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Active Role</span>
+        <span class="kpi-value">{{ current_user.role.value|capitalize }}</span>
+        <div class="meta-copy">Access controls shape the actions shown here.</div>
+      </div>
+      <div class="kpi">
+        <span class="kpi-label">Session Guard</span>
+        <span class="kpi-value">Protected</span>
+        <div class="meta-copy">IP-bound and timeout-limited session.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="content-grid">
+    <section class="panel">
+      <div class="panel-heading">
+        <div>
+          <span class="panel-kicker">Accounts</span>
+          <h2 class="panel-title">{% if request.endpoint == 'admin.all_accounts' %}Operational Accounts{% else %}Account Access{% endif %}</h2>
+        </div>
+      </div>
+      {% if accounts %}
+        <div class="account-list">
+          {% for account in accounts %}
+            <article class="account-row">
+              <div class="stack" style="gap: 8px;">
+                <a class="account-link mono" href="{{ url_for('accounts.account_detail', account_id=account.id, origin='all_accounts' if request.endpoint == 'admin.all_accounts' else None) }}">{{ account.account_number }}</a>
+                <div class="account-meta">
+                  <span>{{ account.account_type.value|capitalize }}</span>
+                  <span class="status-pill {% if account.status.value == 'active' %}success{% elif account.status.value == 'frozen' %}warning{% else %}error{% endif %}">{{ account.status.value|capitalize }}</span>
+                  <span class="inline-stat">Balance: PKR {{ '%.2f'|format(balances[account.id]) }}</span>
+                </div>
+              </div>
+              <div class="account-actions">
+                <a class="btn btn-ghost" href="{{ url_for('accounts.account_detail', account_id=account.id, origin='all_accounts' if request.endpoint == 'admin.all_accounts' else None) }}">Open</a>
+                {% if account.user_id == current_user.id %}
+                  <a class="btn btn-secondary" href="{{ url_for('transactions.deposit', account_id=account.id) }}">Deposit</a>
+                  <a class="btn btn-secondary" href="{{ url_for('transactions.withdraw', account_id=account.id) }}">Withdraw</a>
+                  <a class="btn btn-primary" href="{{ url_for('transactions.transfer', account_id=account.id) }}">Transfer</a>
+                {% endif %}
+              </div>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="empty-state">
+          <p>No accounts are available in this view. If this is unexpected, ask a teller or administrator to review account provisioning.</p>
+        </div>
+      {% endif %}
+    </section>
+
+    <aside class="panel">
+      <span class="panel-kicker">Control posture</span>
+      <h2 class="panel-title">What This Screen Optimizes For</h2>
+      <div class="bullet-list">
+        <div class="bullet-item">
+          <span class="bullet-dot"></span>
+          <div>
+            <strong>Fast scanning</strong>
+            <div class="meta-copy">Account number, type, state, and balance are visible without drilling in.</div>
+          </div>
+        </div>
+        <div class="bullet-item">
+          <span class="bullet-dot warning"></span>
+          <div>
+            <strong>Controlled actions</strong>
+            <div class="meta-copy">Only the owner-facing accounts expose money movement controls in this view.</div>
+          </div>
+        </div>
+        <div class="bullet-item">
+          <span class="bullet-dot success"></span>
+          <div>
+            <strong>Ledger confidence</strong>
+            <div class="meta-copy">Balances reflect ledger entries, keeping the financial model explicit.</div>
+          </div>
+        </div>
+      </div>
+      <p class="footer-note">Dense by design. This is an operator surface, not a marketing page.</p>
+    </aside>
+  </div>
+{% endblock %}

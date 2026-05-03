@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Withdraw{% endblock %}
+{% block content %}
+  <section class="page-header">
+    <div class="page-header-main">
+      <div>
+        <span class="eyebrow">Withdrawal flow</span>
+        <h1 class="page-title">Withdraw From {{ account.account_number }}</h1>
+      </div>
+      <div class="page-actions">
+        <a class="btn btn-ghost" href="{{ url_for('accounts.account_detail', account_id=account.id) }}">Back To Account</a>
+      </div>
+    </div>
+    <p class="page-subtitle">Post an outbound amount to this account. The service layer will reject insufficient-funds attempts before completion.</p>
+  </section>
+
+  <div class="content-grid">
+    <form class="panel form-grid" method="POST">
+      {{ form.hidden_tag() }}
+      <div class="field-block">
+        <label class="field-label" for="withdraw-amount">Amount</label>
+        {{ form.amount(id="withdraw-amount", class_="field-input", step="0.01", min="0.01", placeholder="0.00") }}
+        {% if form.amount.errors %}
+          <div class="field-errors">
+            {% for error in form.amount.errors %}<span>{{ error }}</span>{% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <button class="btn btn-primary" type="submit" id="withdraw-btn">Post Withdrawal</button>
+    </form>
+
+    <aside class="panel">
+      <span class="panel-kicker">Operator note</span>
+      <h2 class="panel-title">Withdrawal Checks</h2>
+      <p class="helper-copy">This flow stays sparse on purpose. Operators should see the account target and amount without extra decoration or hidden assumptions.</p>
+      <p class="footer-note">Replay nonce included automatically for each request.</p>
+    </aside>
+  </div>
+{% endblock %}

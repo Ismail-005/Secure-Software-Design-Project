@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}MFA Verification{% endblock %}
+{% block content %}
+  <div>
+    <h1 class="page-title">Verify Session</h1>
+    <p class="auth-copy">Enter the one-time passcode tied to this login attempt. The session will remain time-limited and IP-bound after verification.</p>
+  </div>
+  {% if demo_show_otp and demo_otp %}
+    <section class="panel">
+      <span class="panel-kicker">Demo verification code</span>
+      <h2 class="panel-title">{{ demo_otp }}</h2>
+      <p class="helper-copy">This code is shown in-app for coursework/demo use only. It is not a real second factor.</p>
+    </section>
+  {% endif %}
+  <form class="form-grid" method="POST">
+    {{ form.hidden_tag() }}
+    <div class="field-block">
+      <label class="field-label" for="otp-input">One-Time Passcode</label>
+      {{ form.otp(id="otp-input", class_="field-input", maxlength="6", autocomplete="one-time-code", inputmode="numeric") }}
+      {% if form.otp.errors %}
+        <div class="field-errors">
+          {% for error in form.otp.errors %}<span>{{ error }}</span>{% endfor %}
+        </div>
+      {% endif %}
+    </div>
+    <button class="btn btn-primary" type="submit" id="mfa-submit">Verify And Enter</button>
+  </form>
+  <p class="footer-note">If the code expires, restart the login flow so a new verification token can be issued.</p>
+{% endblock %}
