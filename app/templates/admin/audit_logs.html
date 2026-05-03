@@ -33,7 +33,15 @@
           {% for log in logs %}
             <tr>
               <td>{{ log.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-              <td class="mono">{{ log.user_id or 'SYSTEM' }}</td>
+              <td>
+                {% if log.user %}
+                  {{ log.user.username }} <span class="mono">#{{ log.user_id }}</span>
+                {% elif log.details and log.details.get('username') %}
+                  {{ log.details.get('username') }} <span class="mono">SYSTEM</span>
+                {% else %}
+                  <span class="mono">SYSTEM</span>
+                {% endif %}
+              </td>
               <td><span class="status-pill info">{{ log.action }}</span></td>
               <td class="mono">{{ log.ip_address or 'n/a' }}</td>
               <td class="mono">{{ log.details or '{}' }}</td>

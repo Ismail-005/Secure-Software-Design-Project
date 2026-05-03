@@ -31,11 +31,19 @@
         </thead>
         <tbody>
           {% for user in users %}
+            {% set is_locked = user.locked_until and user.locked_until > now %}
             <tr>
               <td class="mono">{{ user.id }}</td>
               <td>{{ user.username }}</td>
               <td><span class="status-pill info">{{ user.role.value|capitalize }}</span></td>
-              <td>{{ user.locked_until.strftime('%Y-%m-%d %H:%M') if user.locked_until else 'Active' }}</td>
+              <td>
+                {% if is_locked %}
+                  <span class="status-pill error">Locked</span>
+                  <span class="mono">{{ user.locked_until.strftime('%Y-%m-%d %H:%M') }}</span>
+                {% else %}
+                  <span class="status-pill success">Active</span>
+                {% endif %}
+              </td>
               <td>
                 <div class="stack" style="gap: 8px;">
                   <form class="form-grid" method="POST" action="{{ url_for('admin.update_role', user_id=user.id) }}">
@@ -54,6 +62,12 @@
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <button class="btn btn-primary" type="submit">Lock User</button>
                   </form>
+                  {% if is_locked %}
+                    <form method="POST" action="{{ url_for('admin.unlock_user', user_id=user.id) }}">
+                      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                      <button class="btn btn-secondary" type="submit">Unlock User</button>
+                    </form>
+                  {% endif %}
                 </div>
               </td>
             </tr>

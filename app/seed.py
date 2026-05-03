@@ -9,10 +9,10 @@ def seed():
         if User.query.filter_by(username='admin').first():
             print("Already seeded.")
             return
-        password_hash = bcrypt.hashpw(b'Admin1234!', bcrypt.gensalt()).decode()
+        password_hash = bcrypt.hashpw(b'Admin123!', bcrypt.gensalt()).decode()
         admin = User(
-            username='admin',
-            email='admin@scbs.local',
+            username='admin2',
+            email='admin2@scbs.local',
             password_hash=password_hash,
             role=UserRole.admin,
         )

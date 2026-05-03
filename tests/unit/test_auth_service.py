@@ -26,6 +26,19 @@ def test_attempt_login_wrong_password(db, customer_user):
     ok, msg, uid = svc.attempt_login('testcustomer', 'wrongpass', '127.0.0.1')
     assert ok is False
     assert uid is None
+    from app.models import AuditLog
+    log = AuditLog.query.filter_by(action='LOGIN_FAILURE').one()
+    assert log.details['username'] == 'testcustomer'
+
+def test_attempt_login_unknown_user_audits_attempted_username(db):
+    svc = AuthService()
+    ok, msg, uid = svc.attempt_login('missinguser', 'wrongpass', '127.0.0.1')
+    assert ok is False
+    assert uid is None
+    from app.models import AuditLog
+    log = AuditLog.query.filter_by(action='LOGIN_FAILURE').one()
+    assert log.user_id is None
+    assert log.details['username'] == 'missinguser'
 
 def test_attempt_login_locks_after_five_failures(db, customer_user):
     svc = AuthService()

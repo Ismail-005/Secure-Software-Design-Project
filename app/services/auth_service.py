@@ -25,19 +25,28 @@ class AuthService:
                       ip: str) -> tuple[bool, str, int | None]:
         user = self._users.find_by_username(username)
         if not user:
+            self._audit.log(None, 'LOGIN_FAILURE', ip, {'username': username})
             return False, 'Invalid credentials.', None
 
         if user.locked_until and user.locked_until > datetime.utcnow():
+            self._audit.log(user.id, 'LOGIN_FAILURE', ip, {
+                'username': username,
+                'reason': 'account_locked',
+            })
             return False, 'Account locked. Try again later.', None
+        if user.locked_until:
+            self._users.unlock_account(user.id)
+            user.locked_until = None
+            user.failed_login_attempts = 0
 
         if not self.verify_password(password, user.password_hash):
             self._users.increment_failed_logins(user.id)
             if user.failed_login_attempts + 1 >= 5:
                 lock_until = datetime.utcnow() + timedelta(minutes=30)
                 self._users.lock_account(user.id, lock_until)
-                self._audit.log(user.id, 'ACCOUNT_LOCKED', ip, {})
+                self._audit.log(user.id, 'ACCOUNT_LOCKED', ip, {'username': username})
             else:
-                self._audit.log(user.id, 'LOGIN_FAILURE', ip, {})
+                self._audit.log(user.id, 'LOGIN_FAILURE', ip, {'username': username})
             return False, 'Invalid credentials.', None
 
         self._audit.log(user.id, 'LOGIN_SUCCESS', ip, {'username': username})

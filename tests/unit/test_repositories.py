@@ -48,6 +48,19 @@ def test_lock_and_reset_account(db):
     assert user.failed_login_attempts == 0
     assert user.locked_until is None
 
+def test_clear_expired_locks(db):
+    repo = UserRepository()
+    user = repo.create('frank', 'frank@test.com', 'hash', 'customer')
+    db.session.commit()
+    repo.lock_account(user.id, datetime.utcnow() - timedelta(minutes=1))
+    db.session.commit()
+
+    assert repo.clear_expired_locks(datetime.utcnow()) == 1
+    db.session.commit()
+    db.session.refresh(user)
+    assert user.locked_until is None
+    assert user.failed_login_attempts == 0
+
 # --- AccountRepository ---
 
 def test_create_account_and_get_balance(db, customer_user):

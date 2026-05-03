@@ -10,6 +10,9 @@ def test_deposit_increases_balance(db, customer_account):
                     customer_account.user_id, '127.0.0.1')
     db.session.commit()
     assert acc_svc.get_balance(customer_account.id) == Decimal('500.00')
+    from app.models import AuditLog
+    log = AuditLog.query.filter_by(action='DEPOSIT').one()
+    assert log.details['username'] == 'testcustomer'
 
 def test_withdraw_decreases_balance(db, customer_account):
     txn_svc = TransactionService()
@@ -20,6 +23,9 @@ def test_withdraw_decreases_balance(db, customer_account):
                      customer_account.user_id, '127.0.0.1')
     db.session.commit()
     assert acc_svc.get_balance(customer_account.id) == Decimal('300.00')
+    from app.models import AuditLog
+    log = AuditLog.query.filter_by(action='WITHDRAWAL').one()
+    assert log.details['username'] == 'testcustomer'
 
 def test_replay_attack_rejected(db, customer_account):
     txn_svc = TransactionService()

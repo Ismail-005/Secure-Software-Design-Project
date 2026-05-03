@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from app.middleware.rbac import require_role
@@ -16,8 +17,11 @@ admin_bp = Blueprint('admin', __name__)
 @require_role('admin')
 def users():
     repo = UserRepository()
+    now = datetime.utcnow()
+    if repo.clear_expired_locks(now):
+        db.session.commit()
     all_users = repo.find_all()
-    return render_template('admin/users.html', users=all_users)
+    return render_template('admin/users.html', users=all_users, now=now)
 
 @admin_bp.route('/users/<int:user_id>/role', methods=['POST'])
 @login_required
@@ -39,10 +43,19 @@ def update_role(user_id):
 @session_guard
 @require_role('admin', 'manager')
 def lock_user(user_id):
-    from datetime import datetime, timedelta
     UserRepository().lock_account(user_id, datetime.utcnow() + timedelta(days=365))
     db.session.commit()
     flash('User locked.', 'success')
+    return redirect(url_for('admin.users'))
+
+@admin_bp.route('/users/<int:user_id>/unlock', methods=['POST'])
+@login_required
+@session_guard
+@require_role('admin', 'manager')
+def unlock_user(user_id):
+    UserRepository().unlock_account(user_id)
+    db.session.commit()
+    flash('User unlocked.', 'success')
     return redirect(url_for('admin.users'))
 
 @admin_bp.route('/audit-logs')

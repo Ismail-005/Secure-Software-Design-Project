@@ -31,6 +31,16 @@ class UserRepository:
     def lock_account(self, user_id: int, until: datetime) -> None:
         User.query.filter_by(id=user_id).update({'locked_until': until})
 
+    def unlock_account(self, user_id: int) -> None:
+        User.query.filter_by(id=user_id).update(
+            {'failed_login_attempts': 0, 'locked_until': None}
+        )
+
+    def clear_expired_locks(self, now: datetime) -> int:
+        return User.query.filter(User.locked_until <= now).update(
+            {'failed_login_attempts': 0, 'locked_until': None}
+        )
+
     def reset_failed_logins(self, user_id: int) -> None:
         User.query.filter_by(id=user_id).update(
             {'failed_login_attempts': 0, 'locked_until': None}
