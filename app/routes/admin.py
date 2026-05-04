@@ -7,6 +7,8 @@ from app.repositories.user_repo import UserRepository
 from app.repositories.transaction_repo import TransactionRepository
 from app.repositories.audit_repo import AuditRepository
 from app.services.account_service import AccountService
+from app.repositories.account_repo import AccountRepository
+from app.services.transaction_service import TransactionService
 from app.extensions import db
 
 admin_bp = Blueprint('admin', __name__)
@@ -73,6 +75,40 @@ def audit_logs():
 def fraud_review():
     flagged = TransactionRepository().find_fraud_flagged()
     return render_template('admin/fraud_review.html', transactions=flagged)
+
+@admin_bp.route('/fraud/<int:txn_id>/approve', methods=['POST'])
+@login_required
+@session_guard
+@require_role('manager', 'admin')
+def approve_fraud(txn_id):
+    from flask_login import current_user
+    try:
+        TransactionService().complete_pending(txn_id, current_user.id, request.remote_addr)
+        db.session.commit()
+        flash('Transaction approved and funds transferred.', 'success')
+    except ValueError as e:
+        flash(str(e), 'error')
+    return redirect(url_for('admin.fraud_review'))
+
+@admin_bp.route('/fraud/<int:txn_id>/reject', methods=['POST'])
+@login_required
+@session_guard
+@require_role('manager', 'admin')
+def reject_fraud(txn_id):
+    lock_user = request.form.get('lock_user') == '1'
+    txn_repo = TransactionRepository()
+    txn = txn_repo.find_by_id(txn_id)
+    if txn:
+        txn_repo.update_status(txn_id, 'failed')
+        if lock_user and txn.from_account_id:
+            account = AccountRepository().find_by_id(txn.from_account_id)
+            if account:
+                UserRepository().lock_account(account.user_id,
+                                              datetime.utcnow() + timedelta(days=365))
+    db.session.commit()
+    msg = 'Transaction rejected and user locked.' if lock_user else 'Transaction rejected.'
+    flash(msg, 'warning')
+    return redirect(url_for('admin.fraud_review'))
 
 @admin_bp.route('/accounts')
 @login_required

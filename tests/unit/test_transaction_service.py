@@ -37,9 +37,12 @@ def test_replay_attack_rejected(db, customer_account):
                         customer_account.user_id, '127.0.0.1')
 
 def test_transfer_moves_funds(db, customer_user, customer_account):
+    from datetime import datetime, timedelta
     from app.services.account_service import AccountService
     acc_svc = AccountService()
     txn_svc = TransactionService()
+    # backdate account so it passes the new-account fraud rule
+    customer_account.created_at = datetime.utcnow() - timedelta(days=2)
     to_account = acc_svc.create_account(customer_user.id, 'checking')
     db.session.commit()
     txn_svc.deposit(customer_account.id, Decimal('1000.00'), 'nonce-fund-1',

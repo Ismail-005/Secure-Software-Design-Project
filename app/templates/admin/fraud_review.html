@@ -28,6 +28,7 @@
             <th>From</th>
             <th>To</th>
             <th>Date</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -39,6 +40,19 @@
               <td class="mono">{{ txn.from_account_id or 'n/a' }}</td>
               <td class="mono">{{ txn.to_account_id or 'n/a' }}</td>
               <td>{{ txn.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+              <td>
+                <form method="POST" action="{{ url_for('admin.approve_fraud', txn_id=txn.id) }}" style="display:inline">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <button type="submit" class="btn btn-sm btn-success">Approve</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.reject_fraud', txn_id=txn.id) }}" style="display:inline">
+                  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                  <label style="font-size:0.85em;margin:0 4px;">
+                    <input type="checkbox" name="lock_user" value="1"> Lock user
+                  </label>
+                  <button type="submit" class="btn btn-sm btn-danger">Reject</button>
+                </form>
+              </td>
             </tr>
           {% else %}
             <tr>

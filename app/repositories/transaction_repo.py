@@ -46,6 +46,6 @@ class TransactionRepository:
         Transaction.query.filter_by(id=txn_id).update({'fraud_flagged': flagged})
 
     def find_fraud_flagged(self) -> list[Transaction]:
-        return Transaction.query.filter_by(fraud_flagged=True).order_by(
-            Transaction.created_at.desc()
-        ).all()
+        return Transaction.query.filter_by(
+            fraud_flagged=True, status=TransactionStatus.pending
+        ).order_by(Transaction.created_at.desc()).all()

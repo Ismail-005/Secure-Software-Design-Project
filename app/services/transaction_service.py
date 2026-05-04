@@ -54,12 +54,31 @@ class TransactionService:
         fraud_flag = self._fraud.evaluate(txn, from_account)
         if fraud_flag:
             self._txns.update_fraud_flag(txn.id, True)
+            self._audit.log(user_id, 'TRANSFER_HELD', ip, {
+                'from': from_account_id, 'to': to_account_id, 'amount': str(amount),
+            })
+            return txn
 
         self._accounts.create_ledger_entry(from_account_id, txn.id, 'DEBIT', amount)
         self._accounts.create_ledger_entry(to_account_id, txn.id, 'CREDIT', amount)
         self._txns.update_status(txn.id, 'completed')
         self._audit.log(user_id, 'TRANSFER', ip, {
             'from': from_account_id, 'to': to_account_id, 'amount': str(amount),
-            'fraud_flagged': fraud_flag
+        })
+        return txn
+
+    def complete_pending(self, txn_id: int, admin_user_id: int, ip: str) -> Transaction:
+        txn = self._txns.find_by_id(txn_id)
+        if txn is None:
+            raise ValueError('Transaction not found.')
+        balance = self._accounts.get_balance(txn.from_account_id)
+        if balance < txn.amount:
+            raise ValueError('Insufficient funds.')
+        self._accounts.create_ledger_entry(txn.from_account_id, txn.id, 'DEBIT', txn.amount)
+        self._accounts.create_ledger_entry(txn.to_account_id, txn.id, 'CREDIT', txn.amount)
+        self._txns.update_status(txn.id, 'completed')
+        self._txns.update_fraud_flag(txn.id, False)
+        self._audit.log(admin_user_id, 'FRAUD_APPROVED', ip, {
+            'txn_id': txn_id, 'amount': str(txn.amount),
         })
         return txn
