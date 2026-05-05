@@ -4,7 +4,7 @@ from app.extensions import db
 from app.models.transaction import Transaction, TransactionType, TransactionStatus
 
 class TransactionRepository:
-    def create(self, nonce: str, from_account_id: int | None,
+    def create(self, nonce: str, from_account_id: int | None,  # pylint: disable=too-many-arguments
                to_account_id: int | None, transaction_type: str,
                amount: Decimal) -> Transaction:
         txn = Transaction(

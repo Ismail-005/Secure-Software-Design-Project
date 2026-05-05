@@ -5,7 +5,7 @@ def login_as(client, user):
         sess['_user_id'] = str(user.id)
         sess['_fresh'] = True
         import datetime
-        sess['last_active'] = datetime.datetime.utcnow().isoformat()
+        sess['last_active'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
         sess['ip'] = '127.0.0.1'
 
 def test_customer_cannot_access_admin_users(client, db, customer_user):
@@ -33,10 +33,10 @@ def test_admin_can_access_audit_logs(client, db, admin_user):
     assert r.status_code == 200
 
 def test_admin_can_unblock_locked_user(client, db, admin_user, customer_user):
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, timezone
     from app.repositories.user_repo import UserRepository
     repo = UserRepository()
-    repo.lock_account(customer_user.id, datetime.utcnow() + timedelta(minutes=30))
+    repo.lock_account(customer_user.id, datetime.now(timezone.utc) + timedelta(minutes=30))
     db.session.commit()
 
     login_as(client, admin_user)

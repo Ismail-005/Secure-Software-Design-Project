@@ -26,4 +26,6 @@ class Transaction(db.Model):
     fraud_flagged = db.Column(db.Boolean, default=False, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
 
+    from_account = db.relationship('Account', foreign_keys=[from_account_id], lazy='select')
+    to_account = db.relationship('Account', foreign_keys=[to_account_id], lazy='select')
     ledger_entries = db.relationship('LedgerEntry', backref='transaction', lazy=True)

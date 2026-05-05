@@ -1,8 +1,9 @@
 from app.extensions import db
 from app.models.audit_log import AuditLog
 
+
 class AuditRepository:
-    def create(self, user_id: int | None, action: str, ip_address: str | None,
+    def create(self, user_id: int | None, action: str, ip_address: str | None,  # pylint: disable=too-many-arguments
                details: dict, chain_hash: str) -> AuditLog:
         log = AuditLog(
             user_id=user_id,

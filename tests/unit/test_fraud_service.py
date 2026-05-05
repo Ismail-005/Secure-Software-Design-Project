@@ -12,9 +12,9 @@ def _mock_txn(amount):
     return t
 
 def _mock_account(created_days_ago=10):
-    from datetime import datetime, timedelta
+    from datetime import datetime, timedelta, timezone
     a = MagicMock(spec=Account)
-    a.created_at = datetime.utcnow() - timedelta(days=created_days_ago)
+    a.created_at = datetime.now(timezone.utc) - timedelta(days=created_days_ago)
     return a
 
 def test_flags_large_transfer(app):

@@ -44,9 +44,30 @@ def admin_user(db):
     return user
 
 @pytest.fixture
+def manager_user(db):
+    pw = bcrypt.hashpw(b'Manager1234!', bcrypt.gensalt()).decode()
+    user = User(username='testmanager', email='m@test.com',
+                password_hash=pw, role=UserRole.manager)
+    db.session.add(user)
+    db.session.commit()
+    return user
+
+@pytest.fixture
 def customer_account(db, customer_user):
     account = Account(user_id=customer_user.id,
                       account_type=AccountType.savings)
     db.session.add(account)
     db.session.commit()
     return account
+
+@pytest.fixture
+def other_customer(db):
+    pw = bcrypt.hashpw(b'Other1234!', bcrypt.gensalt()).decode()
+    user = User(username='othercustomer', email='other@test.com',
+                password_hash=pw, role=UserRole.customer)
+    db.session.add(user)
+    db.session.flush()
+    account = Account(user_id=user.id, account_type=AccountType.savings)
+    db.session.add(account)
+    db.session.commit()
+    return user, account

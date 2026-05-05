@@ -1,10 +1,10 @@
 from decimal import Decimal
-from app.extensions import db
+
+from app.models import Transaction
 from app.repositories.account_repo import AccountRepository
 from app.repositories.transaction_repo import TransactionRepository
 from app.services.audit_service import AuditService
 from app.services.fraud_service import FraudService
-from app.models import Transaction
 
 class TransactionService:
     def __init__(self):
@@ -17,7 +17,7 @@ class TransactionService:
         if self._txns.nonce_exists(nonce):
             raise ValueError('Duplicate transaction nonce — replay attack detected.')
 
-    def deposit(self, account_id: int, amount: Decimal, nonce: str,
+    def deposit(self, account_id: int, amount: Decimal, nonce: str,  # pylint: disable=too-many-arguments
                 user_id: int, ip: str) -> Transaction:
         self._check_nonce(nonce)
         txn = self._txns.create(nonce, None, account_id, 'deposit', amount)
@@ -27,7 +27,7 @@ class TransactionService:
                                                    'amount': str(amount)})
         return txn
 
-    def withdraw(self, account_id: int, amount: Decimal, nonce: str,
+    def withdraw(self, account_id: int, amount: Decimal, nonce: str,  # pylint: disable=too-many-arguments
                  user_id: int, ip: str) -> Transaction:
         self._check_nonce(nonce)
         balance = self._accounts.get_balance(account_id)
@@ -40,7 +40,7 @@ class TransactionService:
                                                       'amount': str(amount)})
         return txn
 
-    def transfer(self, from_account_id: int, to_account_id: int,
+    def transfer(self, from_account_id: int, to_account_id: int,  # pylint: disable=too-many-arguments
                  amount: Decimal, nonce: str, user_id: int, ip: str) -> Transaction:
         self._check_nonce(nonce)
         balance = self._accounts.get_balance(from_account_id)
@@ -48,6 +48,7 @@ class TransactionService:
             raise ValueError('Insufficient funds.')
 
         from_account = self._accounts.find_by_id(from_account_id)
+        to_account = self._accounts.find_by_id(to_account_id)
         txn = self._txns.create(nonce, from_account_id, to_account_id,
                                 'transfer', amount)
 
@@ -55,7 +56,9 @@ class TransactionService:
         if fraud_flag:
             self._txns.update_fraud_flag(txn.id, True)
             self._audit.log(user_id, 'TRANSFER_HELD', ip, {
-                'from': from_account_id, 'to': to_account_id, 'amount': str(amount),
+                'from': from_account.account_number,
+                'to': to_account.account_number,
+                'amount': str(amount),
             })
             return txn
 
@@ -63,7 +66,9 @@ class TransactionService:
         self._accounts.create_ledger_entry(to_account_id, txn.id, 'CREDIT', amount)
         self._txns.update_status(txn.id, 'completed')
         self._audit.log(user_id, 'TRANSFER', ip, {
-            'from': from_account_id, 'to': to_account_id, 'amount': str(amount),
+            'from': from_account.account_number,
+            'to': to_account.account_number,
+            'amount': str(amount),
         })
         return txn
 

@@ -7,7 +7,7 @@ def login_as(client, app, user):
         sess['_user_id'] = str(user.id)
         sess['_fresh'] = True
         import datetime
-        sess['last_active'] = datetime.datetime.utcnow().isoformat()
+        sess['last_active'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
         sess['ip'] = '127.0.0.1'
 
 def test_xss_not_reflected_in_login_error(client, db):

@@ -53,13 +53,13 @@ def test_verify_otp(db, customer_user, app):
     with app.app_context():
         plaintext, _ = svc.generate_otp()
         # Store OTP for user
-        from datetime import datetime, timedelta
+        from datetime import datetime, timedelta, timezone
         from app.repositories.user_repo import UserRepository
         import bcrypt
         token_hash = bcrypt.hashpw(plaintext.encode(), bcrypt.gensalt()).decode()
         repo = UserRepository()
         repo.create_otp(customer_user.id, token_hash,
-                        datetime.utcnow() + timedelta(minutes=5))
+                        datetime.now(timezone.utc) + timedelta(minutes=5))
         db.session.commit()
         result = svc.verify_otp(customer_user.id, plaintext)
         assert result is True

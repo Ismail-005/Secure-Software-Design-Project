@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required
 from app.middleware.rbac import require_role
@@ -19,7 +19,7 @@ admin_bp = Blueprint('admin', __name__)
 @require_role('admin')
 def users():
     repo = UserRepository()
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     if repo.clear_expired_locks(now):
         db.session.commit()
     all_users = repo.find_all()
@@ -45,7 +45,7 @@ def update_role(user_id):
 @session_guard
 @require_role('admin', 'manager')
 def lock_user(user_id):
-    UserRepository().lock_account(user_id, datetime.utcnow() + timedelta(days=365))
+    UserRepository().lock_account(user_id, datetime.now(timezone.utc) + timedelta(days=365))
     db.session.commit()
     flash('User locked.', 'success')
     return redirect(url_for('admin.users'))
@@ -66,7 +66,9 @@ def unlock_user(user_id):
 @require_role('admin', 'manager')
 def audit_logs():
     logs = AuditRepository().find_all(limit=200)
-    return render_template('admin/audit_logs.html', logs=logs)
+    accounts = AccountRepository().find_all()
+    account_map = {a.id: a.account_number for a in accounts}
+    return render_template('admin/audit_logs.html', logs=logs, account_map=account_map)
 
 @admin_bp.route('/fraud-review')
 @login_required
@@ -74,7 +76,9 @@ def audit_logs():
 @require_role('manager', 'admin')
 def fraud_review():
     flagged = TransactionRepository().find_fraud_flagged()
-    return render_template('admin/fraud_review.html', transactions=flagged)
+    accounts = AccountRepository().find_all()
+    account_map = {a.id: a.account_number for a in accounts}
+    return render_template('admin/fraud_review.html', transactions=flagged, account_map=account_map)
 
 @admin_bp.route('/fraud/<int:txn_id>/approve', methods=['POST'])
 @login_required
@@ -104,7 +108,7 @@ def reject_fraud(txn_id):
             account = AccountRepository().find_by_id(txn.from_account_id)
             if account:
                 UserRepository().lock_account(account.user_id,
-                                              datetime.utcnow() + timedelta(days=365))
+                                              datetime.now(timezone.utc) + timedelta(days=365))
     db.session.commit()
     msg = 'Transaction rejected and user locked.' if lock_user else 'Transaction rejected.'
     flash(msg, 'warning')

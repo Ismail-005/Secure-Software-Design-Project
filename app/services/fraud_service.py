@@ -1,8 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from decimal import Decimal
+
 from flask import current_app
-from app.repositories.transaction_repo import TransactionRepository
+
 from app.models import Transaction, TransactionType, Account
+from app.repositories.transaction_repo import TransactionRepository
 
 class FraudService:
     def __init__(self):
@@ -15,11 +17,14 @@ class FraudService:
         if txn.amount > threshold:
             return True
 
-        age = datetime.utcnow() - from_account.created_at
+        created_at = from_account.created_at
+        if created_at.tzinfo is None:
+            created_at = created_at.replace(tzinfo=timezone.utc)
+        age = datetime.now(timezone.utc) - created_at
         if age < timedelta(hours=24) and txn.transaction_type == TransactionType.transfer:
             return True
 
-        one_hour_ago = datetime.utcnow() - timedelta(hours=1)
+        one_hour_ago = datetime.now(timezone.utc) - timedelta(hours=1)
         recent_count = self._txns.count_recent_by_account(
             txn.from_account_id, one_hour_ago
         )

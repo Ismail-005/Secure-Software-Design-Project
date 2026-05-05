@@ -37,8 +37,8 @@
               <td class="mono">TXN-{{ txn.id }}</td>
               <td>{{ txn.transaction_type.value|capitalize }}</td>
               <td class="mono">PKR {{ '%.2f'|format(txn.amount) }}</td>
-              <td class="mono">{{ txn.from_account_id or 'n/a' }}</td>
-              <td class="mono">{{ txn.to_account_id or 'n/a' }}</td>
+              <td class="mono">{{ account_map.get(txn.from_account_id, 'n/a') }}</td>
+              <td class="mono">{{ account_map.get(txn.to_account_id, 'n/a') }}</td>
               <td>{{ txn.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
               <td>
                 <form method="POST" action="{{ url_for('admin.approve_fraud', txn_id=txn.id) }}" style="display:inline">

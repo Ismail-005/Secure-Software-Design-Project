@@ -44,7 +44,18 @@
               </td>
               <td><span class="status-pill info">{{ log.action }}</span></td>
               <td class="mono">{{ log.ip_address or 'n/a' }}</td>
-              <td class="mono">{{ log.details or '{}' }}</td>
+              <td class="mono">
+                {% if log.details %}
+                  {% for k, v in log.details.items() if k != 'username' %}
+                    {% if k in ('from', 'to') %}
+                      <span>{{ k }}: {{ account_map.get(v, v) }}</span>
+                    {% else %}
+                      <span>{{ k }}: {{ v }}</span>
+                    {% endif %}
+                    {% if not loop.last %} &middot; {% endif %}
+                  {% endfor %}
+                {% endif %}
+              </td>
             </tr>
           {% else %}
             <tr>

@@ -1,7 +1,7 @@
 from functools import wraps
 from flask import session, request, redirect, url_for, abort
 from flask_login import current_user
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 SESSION_TIMEOUT_MINUTES = 30
 
@@ -12,7 +12,10 @@ def session_guard(f):
             return redirect(url_for('auth.login'))
         last_active = session.get('last_active')
         if last_active:
-            elapsed = datetime.utcnow() - datetime.fromisoformat(last_active)
+            dt = datetime.fromisoformat(last_active)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            elapsed = datetime.now(timezone.utc) - dt
             if elapsed > timedelta(minutes=SESSION_TIMEOUT_MINUTES):
                 session.clear()
                 return redirect(url_for('auth.login'))
@@ -20,6 +23,6 @@ def session_guard(f):
         if stored_ip and stored_ip != request.remote_addr:
             session.clear()
             abort(401)
-        session['last_active'] = datetime.utcnow().isoformat()
+        session['last_active'] = datetime.now(timezone.utc).isoformat()
         return f(*args, **kwargs)
     return decorated

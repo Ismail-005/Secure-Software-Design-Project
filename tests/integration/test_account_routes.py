@@ -7,7 +7,7 @@ def login_as(client, app, user):
             sess['_user_id'] = str(user.id)
             sess['_fresh'] = True
             import datetime
-            sess['last_active'] = datetime.datetime.utcnow().isoformat()
+            sess['last_active'] = datetime.datetime.now(datetime.timezone.utc).isoformat()
             sess['ip'] = '127.0.0.1'
 
 def test_dashboard_requires_login(client):

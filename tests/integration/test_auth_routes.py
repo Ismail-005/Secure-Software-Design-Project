@@ -82,11 +82,11 @@ def test_mfa_verify_redirects_to_dashboard(client, db, customer_user, app):
         from app.services.auth_service import AuthService
         svc = AuthService()
         plaintext, hashed = svc.generate_otp()
-        from datetime import datetime, timedelta
+        from datetime import datetime, timedelta, timezone
         from app.repositories.user_repo import UserRepository
         repo = UserRepository()
         repo.create_otp(customer_user.id, hashed,
-                        datetime.utcnow() + timedelta(minutes=5))
+                        datetime.now(timezone.utc) + timedelta(minutes=5))
         db.session.commit()
     r = client.post('/mfa/verify', data={'otp': plaintext}, follow_redirects=False)
     assert r.status_code in (200, 302)

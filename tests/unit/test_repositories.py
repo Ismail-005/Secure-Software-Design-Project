@@ -1,6 +1,6 @@
 import pytest
 from decimal import Decimal
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from app.repositories.user_repo import UserRepository
 from app.repositories.account_repo import AccountRepository
 from app.repositories.transaction_repo import TransactionRepository
@@ -37,7 +37,7 @@ def test_lock_and_reset_account(db):
     repo = UserRepository()
     user = repo.create('eve', 'eve@test.com', 'hash', 'customer')
     db.session.commit()
-    until = datetime.utcnow() + timedelta(minutes=30)
+    until = datetime.now(timezone.utc) + timedelta(minutes=30)
     repo.lock_account(user.id, until)
     db.session.commit()
     db.session.refresh(user)
@@ -52,10 +52,10 @@ def test_clear_expired_locks(db):
     repo = UserRepository()
     user = repo.create('frank', 'frank@test.com', 'hash', 'customer')
     db.session.commit()
-    repo.lock_account(user.id, datetime.utcnow() - timedelta(minutes=1))
+    repo.lock_account(user.id, datetime.now(timezone.utc) - timedelta(minutes=1))
     db.session.commit()
 
-    assert repo.clear_expired_locks(datetime.utcnow()) == 1
+    assert repo.clear_expired_locks(datetime.now(timezone.utc)) == 1
     db.session.commit()
     db.session.refresh(user)
     assert user.locked_until is None

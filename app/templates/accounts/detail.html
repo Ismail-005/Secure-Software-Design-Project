@@ -85,6 +85,8 @@
             <th>Date</th>
             <th>Reference</th>
             <th>Type</th>
+            <th>From</th>
+            <th>To</th>
             <th>Amount</th>
             <th>Status</th>
             <th>Fraud</th>
@@ -96,6 +98,8 @@
               <td>{{ txn.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
               <td class="mono">TXN-{{ txn.id }}</td>
               <td>{{ txn.transaction_type.value|capitalize }}</td>
+              <td class="mono">{{ txn.from_account.account_number if txn.from_account else '—' }}</td>
+              <td class="mono">{{ txn.to_account.account_number if txn.to_account else '—' }}</td>
               <td class="mono">PKR {{ '%.2f'|format(txn.amount) }}</td>
               <td>
                 <span class="status-pill {% if txn.status.value == 'completed' %}success{% elif txn.status.value == 'pending' %}warning{% else %}error{% endif %}">{{ txn.status.value|capitalize }}</span>
@@ -110,7 +114,7 @@
             </tr>
           {% else %}
             <tr>
-              <td colspan="6">No transactions have been posted to this account yet.</td>
+              <td colspan="8">No transactions have been posted to this account yet.</td>
             </tr>
           {% endfor %}
         </tbody>

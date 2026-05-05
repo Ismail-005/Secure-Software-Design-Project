@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from app.extensions import db
 from app.models.user import User, UserRole
 from app.models.otp_token import OTPToken
@@ -57,7 +57,7 @@ class UserRepository:
 
     def find_valid_otp(self, user_id: int) -> OTPToken | None:
         return OTPToken.query.filter_by(user_id=user_id, used=False).filter(
-            OTPToken.expires_at > datetime.utcnow()
+            OTPToken.expires_at > datetime.now(timezone.utc)
         ).first()
 
     def mark_otp_used(self, otp_id: int) -> None:
